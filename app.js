@@ -371,8 +371,8 @@ const PERSON_SVG='<svg viewBox="0 0 24 24" width="54%" height="54%" fill="rgba(2
       (mark email confirmed). Only emails that already exist as users get a code —
       shouldCreateUser:false below means random emails are silently ignored.
 */
-const SUPABASE_URL="YOUR_SUPABASE_URL";        /* مثال: https://xxxx.supabase.co */
-const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL="https://cjytpicdsedcgqauatkp.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_Ly9alyc24InsrFv595busQ_ZuKdKbDI";
 const sb=(window.supabase && /^https:\/\//.test(SUPABASE_URL) && SUPABASE_ANON_KEY!=="YOUR_SUPABASE_ANON_KEY")
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
 
