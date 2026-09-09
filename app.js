@@ -153,9 +153,11 @@ const DATA = {
       mat_edit_title:"Edit lecture materials", mat_saved:"Materials updated ✔",
       faq_edit_title:"Edit FAQ", faq_q:"Question", faq_a:"Answer", faq_saved:"FAQ updated ✔",
       gen_reset_done:"Reset to default ✔",
-      owner_title:"Owner access", owner_note:"Enter the owner passcode to enable editing. Everyone else sees a read-only site.",
-      owner_ph:"Passcode", owner_unlock:"Unlock 🔓", owner_ok:"Owner mode on — you can edit ✏️", owner_bad:"Wrong passcode",
-      owner_locked:"Owner mode off — read-only 🔒",
+      owner_title:"Owner access", owner_note:"Enter the owner email — we'll send a 6-digit code to unlock editing. Everyone else sees a read-only site.",
+      owner_email_ph:"Owner email", owner_send:"Send code 📩",
+      owner_code_note:"Enter the 6-digit code sent to your email.",
+      owner_ph:"6-digit code", owner_unlock:"Unlock 🔓", owner_ok:"Owner mode on — you can edit ✏️", owner_bad:"Wrong or expired code",
+      owner_bad_email:"Enter a valid email", owner_locked:"Owner mode off — read-only 🔒",
     },
   },
   ar:{
@@ -309,9 +311,11 @@ const DATA = {
       mat_edit_title:"تعديل مواد المحاضرات", mat_saved:"تم تحديث المواد ✔",
       faq_edit_title:"تعديل الأسئلة الشائعة", faq_q:"السؤال", faq_a:"الإجابة", faq_saved:"تم تحديث الأسئلة ✔",
       gen_reset_done:"تمت الاستعادة ✔",
-      owner_title:"دخول المالك", owner_note:"أدخل رمز المالك لتفعيل التعديل. يرى بقية الزوّار الموقع للقراءة فقط.",
-      owner_ph:"الرمز", owner_unlock:"فتح 🔓", owner_ok:"وضع المالك مُفعّل — يمكنك التعديل ✏️", owner_bad:"رمز خاطئ",
-      owner_locked:"وضع المالك مُوقف — قراءة فقط 🔒",
+      owner_title:"دخول المالك", owner_note:"أدخل إيميل المالك — بنرسل لك كود من 6 أرقام لتفعيل التعديل. يرى بقية الزوّار الموقع للقراءة فقط.",
+      owner_email_ph:"إيميل المالك", owner_send:"إرسال الكود 📩",
+      owner_code_note:"أدخل الكود المكوّن من 6 أرقام اللي وصلك على الإيميل.",
+      owner_ph:"الكود (6 أرقام)", owner_unlock:"فتح 🔓", owner_ok:"وضع المالك مُفعّل — يمكنك التعديل ✏️", owner_bad:"الكود خاطئ أو انتهت صلاحيته",
+      owner_bad_email:"أدخل إيميل صحيح", owner_locked:"وضع المالك مُوقف — قراءة فقط 🔒",
     },
   }
 };
@@ -359,24 +363,68 @@ const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const ar = n => LANG==="ar" ? String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]) : String(n);
 const PERSON_SVG='<svg viewBox="0 0 24 24" width="54%" height="54%" fill="rgba(255,255,255,.92)" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>';
 
-/* ---- owner mode (edit gate) ---- */
-const OWNER_HASH="fb31u8";  /* passcode hash — default code: utas2026 */
+/* ---- owner mode (edit gate — Supabase email OTP) ----
+   Setup needed once in Supabase (see SUPABASE_SETUP.md):
+   1) Fill SUPABASE_URL / SUPABASE_ANON_KEY below.
+   2) Authentication → Providers → Email → enable "Email OTP" (or leave default email provider on).
+   3) Authentication → Users → Add user → create exactly ONE user with the owner's email
+      (mark email confirmed). Only emails that already exist as users get a code —
+      shouldCreateUser:false below means random emails are silently ignored.
+*/
+const SUPABASE_URL="YOUR_SUPABASE_URL";        /* مثال: https://xxxx.supabase.co */
+const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";
+const sb=(window.supabase && /^https:\/\//.test(SUPABASE_URL) && SUPABASE_ANON_KEY!=="YOUR_SUPABASE_ANON_KEY")
+  ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
+
 const EDIT_IDS=["instEditBtn","offEditBtn","socEditBtn","rulesEditBtn","uniEditBtn","mapEditBtn","annEditBtn","matEditBtn","faqEditBtn","calEditBtn"];
-let OWNER=false;
-function hashCode(s){ let x=5381; for(let i=0;i<s.length;i++) x=((x*33)^s.charCodeAt(i))>>>0; return x.toString(36); }
-function loadOwner(){ try{ OWNER=localStorage.getItem("fh_owner")==="1"; }catch(e){} }
+let OWNER=false, OWNER_EMAIL="";
+async function loadOwner(){
+  if(!sb) return;
+  try{ const {data}=await sb.auth.getSession(); OWNER=!!(data&&data.session); }catch(e){ OWNER=false; }
+}
 function applyOwner(){ document.documentElement.classList.toggle("owner",OWNER); const b=$("#ownerBtn"); if(b) b.textContent=OWNER?"🔓":"🔒"; }
-function ownerToggle(){
-  if(OWNER){ OWNER=false; try{localStorage.removeItem("fh_owner")}catch(e){} applyOwner(); toast(D().m.owner_locked); return; }
+
+async function ownerToggle(){
+  if(OWNER){
+    OWNER=false; try{ if(sb) await sb.auth.signOut(); }catch(e){}
+    applyOwner(); toast(D().m.owner_locked); return;
+  }
+  if(!sb){ toast("⚠️ Supabase not configured yet"); return; }
   const m=D().m;
   openModal(`<h3>🔒 ${m.owner_title}</h3><p class="sub">${m.owner_note}</p>
-    <div class="field"><input id="ownerCode" type="password" placeholder="${m.owner_ph}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--brd);background:var(--glass-2);color:var(--ink);font-family:var(--fb);font-size:1rem;letter-spacing:.15em"></div>
-    <div class="field-inline"><button class="btn mini coral" onclick="ownerTry()">${m.owner_unlock}</button></div>`);
-  setTimeout(()=>{ const i=$("#ownerCode"); if(i){ i.focus(); i.addEventListener("keydown",e=>{ if(e.key==="Enter") ownerTry(); }); } },80);
+    <div class="field"><input id="ownerEmail" type="email" placeholder="${m.owner_email_ph}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--brd);background:var(--glass-2);color:var(--ink);font-family:var(--fb);font-size:1rem"></div>
+    <div class="field-inline"><button class="btn mini coral" id="ownerSendBtn">${m.owner_send}</button></div>`);
+  setTimeout(()=>{ const i=$("#ownerEmail"); const b=$("#ownerSendBtn");
+    if(i){ i.focus(); i.addEventListener("keydown",e=>{ if(e.key==="Enter") ownerSendCode(); }); }
+    if(b) b.onclick=ownerSendCode;
+  },80);
 }
-function ownerTry(){ const v=($("#ownerCode")&&$("#ownerCode").value)||"";
-  if(hashCode(v)===OWNER_HASH){ OWNER=true; try{localStorage.setItem("fh_owner","1")}catch(e){} applyOwner(); closeModal(); toast(D().m.owner_ok); }
-  else toast(D().m.owner_bad); }
+
+async function ownerSendCode(){
+  const email=(($("#ownerEmail")&&$("#ownerEmail").value)||"").trim();
+  if(!email||!/^\S+@\S+\.\S+$/.test(email)){ toast(D().m.owner_bad_email); return; }
+  const btn=$("#ownerSendBtn"); if(btn){ btn.disabled=true; btn.textContent="…"; }
+  try{ await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:false } }); }catch(e){ /* رسالة واحدة لكل الحالات — ما نكشف إذا الإيميل مسجّل */ }
+  OWNER_EMAIL=email;
+  const m=D().m;
+  openModal(`<h3>🔒 ${m.owner_title}</h3><p class="sub">${m.owner_code_note}</p>
+    <div class="field"><input id="ownerCode" type="text" inputmode="numeric" maxlength="6" placeholder="${m.owner_ph}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--brd);background:var(--glass-2);color:var(--ink);font-family:var(--fb);font-size:1.2rem;letter-spacing:.3em;text-align:center"></div>
+    <div class="field-inline"><button class="btn mini coral" id="ownerVerifyBtn">${m.owner_unlock}</button></div>`);
+  setTimeout(()=>{ const i=$("#ownerCode"); const b=$("#ownerVerifyBtn");
+    if(i){ i.focus(); i.addEventListener("keydown",e=>{ if(e.key==="Enter") ownerVerify(); }); }
+    if(b) b.onclick=ownerVerify;
+  },80);
+}
+
+async function ownerVerify(){
+  const token=(($("#ownerCode")&&$("#ownerCode").value)||"").trim();
+  if(!token) return;
+  try{
+    const {data,error}=await sb.auth.verifyOtp({ email:OWNER_EMAIL, token, type:"email" });
+    if(error||!data.session) throw error||new Error("no session");
+    OWNER=true; applyOwner(); closeModal(); toast(D().m.owner_ok);
+  }catch(e){ toast(D().m.owner_bad); }
+}
 
 /* ============================================================
    CALENDAR (editable + persisted)
@@ -1420,7 +1468,7 @@ loadRul();
 loadUni();
 loadMap();
 loadEx();
-loadOwner();
 render();
 EDIT_IDS.forEach(id=>{ const b=document.getElementById(id); if(b) b.classList.add("ownerbtn"); });
 applyOwner();
+loadOwner().then(applyOwner); /* async: confirms a real Supabase session, then re-applies once resolved */
