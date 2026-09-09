@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mr. Yousef Al-Harthi — Foundation Speaking Hub</title>
+<meta name="description" content="Foundation Program hub for Mr. Yousef Al-Harthi: reading, writing & public speaking — courses, office hours, guidelines, and live classroom activities." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="blobs"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="shapes" aria-hidden="true">
+  <div class="cube c1"><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span></div>
+  <div class="cube c2"><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span></div>
+  <div class="cube c3"><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span></div>
+</div>
+
+<!-- NAV -->
+<header class="nav"><div class="wrap"><div class="nav-inner">
+  <a class="brand" href="#top"><span class="mark">🎤</span><span data-t="brand">Speaking Hub</span></a>
+  <div class="nav-tools" style="margin-inline-start:auto">
+    <button class="icon-btn lang-btn" id="langBtn" title="Language"><span>🌐</span><span id="langLabel">عربي</span></button>
+    <button class="icon-btn" id="searchBtn" title="Search">🔍</button>
+    <button class="icon-btn" id="ownerBtn" title="Owner mode">🔒</button>
+  </div>
+</div></div></header>
+
+<span id="top"></span>
+
+<!-- HERO -->
+<section class="hero"><div class="meteors" aria-hidden="true"><span class="meteor" style="left:15%;animation-duration:3.2s;animation-delay:0s"></span><span class="meteor" style="left:34%;animation-duration:4.1s;animation-delay:1.2s"></span><span class="meteor" style="left:54%;animation-duration:3.6s;animation-delay:.6s"></span><span class="meteor" style="left:72%;animation-duration:4.6s;animation-delay:2.1s"></span><span class="meteor" style="left:88%;animation-duration:3.9s;animation-delay:1.6s"></span><span class="meteor" style="left:47%;animation-duration:5s;animation-delay:3s"></span></div><div class="wrap"><div class="hero-grid">
+  <div class="reveal in">
+    <span class="eyebrow">✨ <span data-t="hero_eyebrow"></span></span>
+    <h1 data-t="hero_title"></h1>
+    <p class="lead" data-t="hero_lead"></p>
+    <div class="cta">
+      <button class="btn" onclick="scrollToId('activities')">🎲 <span data-t="hero_cta1"></span></button>
+      <button class="btn ghost" onclick="scrollToId('instructor')"><span data-t="hero_cta2"></span></button>
+    </div>
+  </div>
+  <div class="hero-visual"><div class="tilt" id="tilt">
+    <div class="campus floaty">
+      <div class="bld m"><span class="roof"></span></div>
+      <div class="bld t"><span class="roof"></span></div>
+      <div class="bld r"><span class="roof"></span></div>
+      <div class="ground"></div>
+    </div>
+    <div class="glass profile-card floaty beam" style="animation-delay:.6s">
+      <div class="avatar">YH</div>
+      <div class="name" data-t="inst_name"></div>
+      <div class="role" data-t="inst_role"></div>
+      <div><span class="chip">🎤 Speaking</span><span class="chip">🗣️ Comm</span><span class="chip">⭐ 4.9</span></div>
+    </div>
+    <div class="glass icon-float if1 floaty" style="animation-delay:.2s">📖</div>
+    <div class="glass icon-float if2 floaty" style="animation-delay:.9s">✍️</div>
+    <div class="glass icon-float if3 floaty" style="animation-delay:1.3s">🗣️</div>
+  </div></div>
+</div></div></section>
+
+<!-- STATS -->
+<div class="wrap reveal"><div class="stats" id="stats"></div></div>
+
+<!-- INSTRUCTOR -->
+<section class="section" id="instructor"><div class="wrap">
+  <div class="head reveal" style="max-width:none;display:flex;justify-content:space-between;align-items:flex-start;gap:14px">
+    <div style="max-width:660px">
+      <span class="eyebrow">👨‍🏫 <span data-t="nav_about"></span></span>
+      <h2 data-t="inst_h"></h2><p data-t="inst_p"></p>
+    </div>
+    <button class="icon-btn" id="instEditBtn" title="Edit instructor info">✏️</button>
+  </div>
+  <div class="about">
+    <div class="glass card reveal">
+      <div class="avatar" style="width:110px;height:110px;font-size:2.4rem">YH</div>
+      <h3 style="margin-top:14px" data-t="inst_name"></h3>
+      <p style="color:var(--ink-soft)" data-t="inst_role"></p>
+      <b class="d" style="display:block;margin-top:14px" data-t="inst_focus_h"></b>
+      <div class="pill-row" id="research"></div>
+      <div style="margin-top:16px"><b class="d" data-t="inst_courses_h"></b>
+        <div class="pill-row" id="courses"></div></div>
+    </div>
+    <div class="reveal">
+      <b class="d" style="font-size:1.1rem" data-t="inst_timeline_h"></b>
+      <div class="timeline" id="timeline" style="margin-top:16px"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- RULES (Guidelines) -->
+<section class="section" id="rules"><div class="wrap">
+  <div class="head reveal" style="max-width:none;display:flex;justify-content:space-between;align-items:flex-start;gap:14px">
+    <div style="max-width:660px">
+      <span class="eyebrow">📋 <span data-t="nav_rules"></span></span>
+      <h2 data-t="rules_h"></h2><p data-t="rules_p"></p>
+    </div>
+    <button class="icon-btn" id="rulesEditBtn" title="Edit guidelines">✏️</button>
+  </div>
+  <b class="d" style="font-size:1.05rem" data-t="rules_uni"></b>
+  <div class="grid g3 reveal" id="uniRules" style="margin:14px 0 34px"></div>
+  <b class="d" style="font-size:1.05rem" data-t="rules_class"></b>
+  <div class="grid g3 reveal" id="classRules" style="margin-top:14px"></div>
+</div></section>
+
+<!-- ACTIVITIES -->
+<section class="section" id="activities"><div class="wrap">
+  <div class="head reveal"><span class="eyebrow">🎮 <span data-t="nav_activities"></span></span>
+    <h2 data-t="act_h"></h2><p data-t="act_p"></p></div>
+  <div class="acts" id="acts"></div>
+</div></section>
+
+<!-- OFFICE -->
+<section class="section" id="office"><div class="wrap">
+  <div class="head reveal" style="max-width:none;display:flex;justify-content:space-between;align-items:flex-start;gap:14px">
+    <div style="max-width:660px">
+      <span class="eyebrow">📍 <span data-t="nav_office"></span></span>
+      <h2 data-t="office_h"></h2><p data-t="office_p"></p>
+    </div>
+    <button class="icon-btn" id="offEditBtn" title="Edit office info">✏️</button>
+  </div>
+  <div class="about">
+    <div class="glass card reveal">
+      <div id="officeInfo"></div>
+    </div>
+    <div class="glass reveal" style="padding:14px">
+      <div style="position:relative">
+        <div class="map" id="campusMap"></div>
+        <button class="icon-btn" id="mapEditBtn" title="Edit map" style="position:absolute;top:10px;inset-inline-end:10px;z-index:6">✏️</button>
+      </div>
+      <p style="color:var(--ink-soft);font-size:.86rem;margin-top:10px" data-t="office_dir"></p>
+    </div>
+  </div>
+</div></section>
+
+<!-- UNIVERSITY -->
+<section class="section" id="university"><div class="wrap">
+  <div class="head reveal" style="max-width:none;display:flex;justify-content:space-between;align-items:flex-start;gap:14px">
+    <div style="max-width:660px">
+      <span class="eyebrow">🏛️ <span data-t="nav_university"></span></span>
+      <h2 data-t="uni_h"></h2><p data-t="uni_p"></p>
+    </div>
+    <button class="icon-btn" id="uniEditBtn" title="Edit university info">✏️</button>
+  </div>
+  <div class="grid g4 reveal" id="uniInfo"></div>
+  <div class="glass card reveal" style="margin-top:22px">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+      <b class="d" data-t="uni_cal_h"></b>
+      <button class="icon-btn" id="calEditBtn" title="Edit calendar">✏️</button>
+    </div>
+    <div id="calendar" style="margin-top:14px"></div>
+    <div id="calControls" class="cal-controls" style="display:none"></div>
+  </div>
+</div></section>
+
+<!-- ANNOUNCEMENTS + MATERIALS -->
+<section class="section"><div class="wrap">
+  <div class="grid g2">
+    <div class="reveal">
+      <div class="head" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <span class="eyebrow">📢 <span data-t="ann_h"></span></span>
+        <button class="icon-btn" id="annEditBtn" title="Edit announcements">✏️</button>
+      </div>
+      <div class="grid" id="announcements"></div>
+    </div>
+    <div class="reveal">
+      <div class="head" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <span class="eyebrow">📁 <span data-t="mat_h"></span></span>
+        <button class="icon-btn" id="matEditBtn" title="Edit materials">✏️</button>
+      </div>
+      <div class="grid" id="materials"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- FAQ -->
+<section class="section" id="faq"><div class="wrap">
+  <div class="head reveal" style="max-width:none;display:flex;justify-content:space-between;align-items:flex-start;gap:14px">
+    <div style="max-width:660px">
+      <span class="eyebrow">❓ <span data-t="nav_faq"></span></span>
+      <h2 data-t="faq_h"></h2>
+    </div>
+    <button class="icon-btn" id="faqEditBtn" title="Edit FAQ">✏️</button>
+  </div>
+  <div class="grid reveal" id="faqList"></div>
+</div></section>
+
+<!-- CONTACT -->
+<section class="section" id="contact"><div class="wrap">
+  <div class="head reveal"><span class="eyebrow">✉️ <span data-t="nav_contact"></span></span>
+    <h2 data-t="contact_h"></h2><p data-t="contact_p"></p></div>
+  <div class="glass card reveal" style="max-width:560px">
+    <div id="contactInfo"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px">
+      <b class="d" data-t="contact_follow"></b>
+      <button class="icon-btn" id="socEditBtn" title="Edit links">✏️</button>
+    </div>
+    <div class="socials" id="socials"></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <a class="brand" href="#top"><span class="mark">🎤</span><span data-t="brand"></span></a>
+  <p data-t="footer"></p>
+</div></footer>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="glass modal" id="modal">
+    <button class="icon-btn close-x" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="glass toast" id="toast"></div>
+<div class="flash" id="flash"></div>
+<canvas id="confetti"></canvas>
+
+<script src="app.js"></script>
+</body>
+</html>
