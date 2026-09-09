@@ -3,7 +3,7 @@
    ============================================================ */
 const DATA = {
   en:{
-    brand:"Speaking Hub",
+    brand:"Faisal Hub",
     nav_about:"Instructor", nav_activities:"Activities", nav_rules:"Guidelines",
     nav_office:"Office", nav_university:"University", nav_faq:"FAQ", nav_contact:"Contact",
     hero_eyebrow:"UTAS-Nizwa · General Foundation Program",
@@ -161,7 +161,7 @@ const DATA = {
     },
   },
   ar:{
-    brand:"مركز الخطابة",
+    brand:"مركز فيصل",
     nav_about:"المُدرّس", nav_activities:"الأنشطة", nav_rules:"اللوائح",
     nav_office:"المكتب", nav_university:"الجامعة", nav_faq:"الأسئلة", nav_contact:"تواصل",
     hero_eyebrow:"جامعة التقنية والعلوم التطبيقية بنزوى · البرنامج التأسيسي",
