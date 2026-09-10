@@ -1,24 +1,21 @@
 /* ================= TOKENS ================= */
 :root{
-  --c1:#dfebed; --c2:#497285; --c3:#f78536; --c4:#2b4450;
-  --accent:#f78536;
-  --rose:#2b4450;
-  --blue:#2b4450;
-  --coral:#f78536;
-  --gold:#497285;
+  --c1:#eeeeee; --c2:#393e46; --c3:#d65a31; --c4:#222831;
+  --accent:#d65a31;
+  --rose:#393e46;
+  --blue:#393e46;
+  --coral:#d65a31;
+  --gold:#222831;
 
-  --ink:#2b2342; --ink-soft:#645c7d; --ink-faint:#8a83a3;
-  --page: radial-gradient(1100px 700px at 12% -5%, var(--c2), transparent 60%),
-          radial-gradient(1000px 800px at 100% 0%, var(--c3), transparent 55%),
-          radial-gradient(900px 900px at 50% 120%, var(--c4), transparent 60%),
-          var(--c1);
+  --ink:#222831; --ink-soft:#393e46; --ink-faint:#6d7278;
+  --page: var(--c1);
   --glass: rgba(255,255,255,.55);
   --glass-2: rgba(255,255,255,.38);
   --brd: rgba(255,255,255,.75);
-  --brd-soft: rgba(43,35,66,.10);
-  --shadow: 0 22px 50px -22px rgba(43,35,66,.32);
-  --shadow-soft: 0 10px 30px -14px rgba(43,35,66,.28);
-  --ring: rgba(247,133,54,.5);
+  --brd-soft: rgba(34,40,49,.10);
+  --shadow: 0 22px 50px -22px rgba(34,40,49,.32);
+  --shadow-soft: 0 10px 30px -14px rgba(34,40,49,.28);
+  --ring: rgba(214,90,49,.5);
   --nav: rgba(255,255,255,.6);
   --font-en-d:"Space Grotesk", system-ui, sans-serif;
   --font-en-b:"Poppins", system-ui, sans-serif;
@@ -75,17 +72,17 @@ img{max-width:100%}
 
 /* ================= AMBIENT BG ================= */
 #stars{position:fixed; inset:0; z-index:-2; pointer-events:none}
-.blobs{position:fixed; inset:0; z-index:-3; pointer-events:none; overflow:hidden}
+.blobs{display:none} /* خلفية فاتحة مسطحة بدون تدرج — عطّلنا توهج الفقاعات الملوّنة، والمجسمات (الكيوب) تكفي كعنصر زخرفي غامق */
 .blob{position:absolute; border-radius:50%; filter:blur(60px); opacity:.55; mix-blend-mode:multiply}
 html.dark .blob{mix-blend-mode:screen; opacity:.4}
 .blob.b1{width:420px;height:420px;background:var(--rose);left:-120px;top:8%;animation:drift 22s ease-in-out infinite}
 .blob.b2{width:480px;height:480px;background:var(--blue);right:-140px;top:36%;animation:drift 28s ease-in-out infinite reverse}
-.blob.b3{width:360px;height:360px;background:var(--accent);left:30%;bottom:-120px;animation:drift 25s ease-in-out infinite}
+.blob.b3{width:360px;height:360px;background:var(--blue);left:30%;bottom:-120px;animation:drift 25s ease-in-out infinite}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
 
 .shapes{position:fixed; inset:0; z-index:-1; pointer-events:none}
 .cube{position:absolute; width:60px; height:60px; transform-style:preserve-3d; animation:spin3d 18s linear infinite}
-.cube .f{position:absolute; inset:0; border:1.5px solid color-mix(in srgb, var(--accent) 55%, transparent); background:color-mix(in srgb, var(--accent) 9%, transparent); border-radius:8px}
+.cube .f{position:absolute; inset:0; border:1.5px solid color-mix(in srgb, var(--blue) 55%, transparent); background:color-mix(in srgb, var(--blue) 9%, transparent); border-radius:8px}
 .cube .f:nth-child(1){transform:translateZ(30px)} .cube .f:nth-child(2){transform:rotateY(180deg) translateZ(30px)}
 .cube .f:nth-child(3){transform:rotateY(90deg) translateZ(30px)} .cube .f:nth-child(4){transform:rotateY(-90deg) translateZ(30px)}
 .cube .f:nth-child(5){transform:rotateX(90deg) translateZ(30px)} .cube .f:nth-child(6){transform:rotateX(-90deg) translateZ(30px)}
