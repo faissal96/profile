@@ -215,6 +215,19 @@ html.ar .act::after{content:"↖"}
 .act h3{font-size:1.05rem} .act p{font-size:.86rem; color:var(--ink-soft)}
 .act:hover{transform:translateY(-6px); box-shadow:var(--shadow)}
 
+/* kahoot */
+.kahoot-card{position:relative; display:block; border-radius:22px; overflow:hidden; border:1px solid var(--brd);
+  box-shadow:var(--shadow-soft); transition:transform .25s, box-shadow .25s; min-height:220px}
+.kahoot-card:hover{transform:translateY(-6px); box-shadow:var(--shadow)}
+.kahoot-art{position:absolute; inset:0; width:100%; height:100%; display:block}
+.kahoot-overlay{position:relative; z-index:1; padding:32px 36px; display:flex; flex-direction:column;
+  justify-content:center; min-height:220px; max-width:420px}
+.kahoot-pill{align-self:flex-start; font-size:.78rem; font-weight:700; letter-spacing:.04em; color:#fff;
+  background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); padding:5px 14px; border-radius:50px; margin-bottom:14px}
+.kahoot-overlay h3{color:#fff; font-size:1.7rem; margin-bottom:8px}
+.kahoot-overlay p{color:rgba(255,255,255,.92); font-size:.96rem; font-weight:500}
+@media(max-width:560px){.kahoot-overlay{padding:24px}.kahoot-overlay h3{font-size:1.4rem}}
+
 /* office/map */
 .map{position:relative; height:340px; border-radius:20px; overflow:hidden; border:1px solid var(--brd);
   background:linear-gradient(135deg, color-mix(in srgb,var(--c3) 70%,#fff), color-mix(in srgb,var(--c4) 80%,#fff))}

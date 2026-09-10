@@ -23,6 +23,8 @@ const DATA = {
     ],
     stats:[["10","Years teaching"],["1.2k","Students coached"],["40","Workshops led"],["300","Talks coached"]],
     act_h:"Classroom activities", act_p:"Ten tools to warm up the room and get everyone talking — pick one and run it live.",
+    kahoot_eyebrow:"Quiz", kahoot_h:"Live classroom quiz", kahoot_p:"Jump into a live Kahoot quiz — tap the card below to join on your phone.",
+    kahoot_tag:"🎮 KAHOOT", kahoot_title:"Quiz time", kahoot_cta:"Tap to play on Kahoot ↗",
     activities:[
       {id:"jar",e:"🫙",t:"Magic Number Jar",d:"Shake the jar and draw a folded number — no repeats."},
       {id:"ball",e:"🎾",t:"Question Ball",d:"Toss the ball around — each student introduces themselves."},
@@ -181,6 +183,8 @@ const DATA = {
     ],
     stats:[["١٠","سنوات تدريس"],["١٢٠٠","طالب دربهم"],["٤٠","ورشة قدّمها"],["٣٠٠","خطاب دربه"]],
     act_h:"الأنشطة الصفية", act_p:"عشر أدوات لتهيئة الصف وجعل الجميع يتحدّث — اختر واحدة وشغّلها مباشرةً.",
+    kahoot_eyebrow:"مسابقة", kahoot_h:"مسابقة الصف المباشرة", kahoot_p:"شاركي بمسابقة كاهوت المباشرة — دوسي على البطاقة تحت للانضمام من جوالك.",
+    kahoot_tag:"🎮 كاهوت", kahoot_title:"وقت المسابقة", kahoot_cta:"دوسي للعب على كاهوت ↗",
     activities:[
       {id:"jar",e:"🫙",t:"الجرة العجيبة",d:"رُجّ الجرة واسحب ورقة برقم — بلا تكرار."},
       {id:"ball",e:"🎾",t:"كرة الأسئلة",d:"تبادلوا رمي الكرة — كل طالب يعرّف بنفسه."},
