@@ -123,11 +123,11 @@ header.nav{position:sticky; top:0; z-index:60; padding:12px 0}
 .hero{position:relative; padding:clamp(30px,6vw,70px) 0 clamp(50px,7vw,90px)}
 .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center}
 .hero h1{font-size:clamp(2.2rem,6vw,4rem); font-weight:700; margin:18px 0 16px}
-.hero h1 .grad{background:linear-gradient(100deg,var(--coral),#ffd9c2 30%,var(--blue) 60%,var(--coral));
+.hero h1 .grad{background:linear-gradient(100deg,var(--coral),var(--blue) 55%,var(--coral));
   background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
   animation:gradsheen 9s ease-in-out infinite}
 @keyframes gradsheen{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.hero p.lead{font-size:1.12rem; color:var(--ink-soft); max-width:52ch; margin-bottom:26px}
+.hero p.lead{font-size:1.12rem; color:#0a0a0a; max-width:52ch; margin-bottom:26px}
 .cta{display:flex; gap:14px; flex-wrap:wrap}
 .btn{font-family:var(--fd); font-weight:600; font-size:1rem; padding:14px 26px; border-radius:50px; cursor:pointer;
   border:none; color:#fff; background:linear-gradient(135deg,var(--accent),var(--rose)); box-shadow:0 14px 30px -12px var(--accent);
