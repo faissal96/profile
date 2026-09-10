@@ -1,11 +1,11 @@
 /* ================= TOKENS ================= */
 :root{
-  --c1:#f9f9f9; --c2:#ded5c4; --c3:#ef7e56; --c4:#305973;
-  --accent:#ef7e56;
-  --rose:#305973;
-  --blue:#305973;
-  --coral:#ef7e56;
-  --gold:#e0a56b;
+  --c1:#edf7fa; --c2:#ffb677; --c3:#ff8364; --c4:#5f6caf;
+  --accent:#ff8364;
+  --rose:#5f6caf;
+  --blue:#5f6caf;
+  --coral:#ff8364;
+  --gold:#ffb677;
 
   --ink:#2b2342; --ink-soft:#645c7d; --ink-faint:#8a83a3;
   --page: radial-gradient(1100px 700px at 12% -5%, var(--c2), transparent 60%),
@@ -18,7 +18,7 @@
   --brd-soft: rgba(43,35,66,.10);
   --shadow: 0 22px 50px -22px rgba(43,35,66,.32);
   --shadow-soft: 0 10px 30px -14px rgba(43,35,66,.28);
-  --ring: rgba(239,126,86,.5);
+  --ring: rgba(255,131,100,.5);
   --nav: rgba(255,255,255,.6);
   --font-en-d:"Space Grotesk", system-ui, sans-serif;
   --font-en-b:"Poppins", system-ui, sans-serif;
