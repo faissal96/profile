@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>GFP Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#eeeeee;
+    --paper-2:#e2e2e2;
+    --card:#ffffff;
+    --ink:#222831;
+    --ink-2:#222831;
+    --muted:#6d7278;
+    --accent:#d65a31;
+    --accent-lite:#f7cdbb;
+    --dark:#393e46;
+    --line:#d8d8d8;
+    --shadow:rgba(34,40,49,.14);
+    --fd:"Space Grotesk",system-ui,sans-serif;
+    --fb:"Poppins",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100dvh}
+  body{
+    font-family:var(--fb);color:var(--ink);
+    background:var(--paper);
+    overflow-x:hidden;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:22px 18px 40px;position:relative;z-index:2}
+
+  .backlink{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;font-size:13px;font-weight:600;
+    color:var(--muted);text-decoration:none}
+  .backlink:hover{color:var(--ink)}
+
+  header{text-align:center;margin:6px 0 18px}
+  .bot-badge{width:54px;height:54px;border-radius:16px;background:linear-gradient(145deg,var(--accent),var(--dark));
+    display:grid;place-items:center;font-size:26px;margin:0 auto 10px;box-shadow:0 10px 24px var(--shadow)}
+  h1{
+    font-family:var(--fd);font-weight:700;
+    font-size:clamp(24px,7vw,34px);color:var(--ink);margin:0;
+    letter-spacing:-.01em;
+  }
+  header p{margin:8px 0 0;color:var(--accent);font-size:clamp(13.5px,3.6vw,16px);font-weight:600}
+
+  .chat-card{background:var(--card);border:1px solid var(--line);border-radius:24px;
+    box-shadow:0 20px 50px var(--shadow);display:flex;flex-direction:column;
+    height:min(640px,72dvh);overflow:hidden}
+
+  .chat-top{display:flex;align-items:center;gap:10px;padding:12px 16px;
+    border-bottom:1px solid var(--line);background:var(--paper);flex:0 0 auto}
+  .chat-top-left{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 3px rgba(63,185,80,.2)}
+  .lang-switch{margin-inline-start:auto;display:flex;gap:6px}
+  .lang-switch button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;
+    font-family:var(--fb);font-weight:700;font-size:11.5px;color:var(--muted);cursor:pointer}
+  .lang-switch button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .resetbtn{border:1px solid var(--line);background:#fff;border-radius:10px;width:32px;height:32px;
+    cursor:pointer;font-size:16px;color:var(--muted);flex:0 0 auto}
+  .resetbtn:active{transform:scale(.94)}
+
+  .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+  .msg{max-width:84%;padding:10px 14px;border-radius:16px;font-size:13.8px;line-height:1.6;
+    white-space:pre-line;animation:msgIn .25s ease;word-wrap:break-word}
+  @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .msg.bot{align-self:flex-start;background:var(--paper);color:var(--ink);border-end-start-radius:4px}
+  .msg.user{align-self:flex-end;background:var(--ink);color:#fff;border-end-end-radius:4px}
+
+  .typing{align-self:flex-start;display:flex;gap:4px;padding:13px 15px;background:var(--paper);border-radius:16px}
+  .typing span{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+  .chips-row{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px;flex:0 0 auto}
+  .chip-btn{border:1px solid var(--accent);background:var(--accent-lite);color:var(--dark);border-radius:999px;
+    padding:7px 13px;font-family:var(--fb);font-weight:600;font-size:12.3px;cursor:pointer;
+    transition:transform .12s;line-height:1.3}
+  .chip-btn:hover{transform:translateY(-2px)}
+  .chip-btn.alt{border-color:var(--line);background:#fff;color:var(--muted)}
+
+  .lang-pick{display:flex;gap:10px;width:100%}
+  .lang-pick button{flex:1;padding:14px 8px;border-radius:14px;border:1.5px solid var(--line);background:#fff;
+    font-family:var(--fd);font-weight:700;font-size:14px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink)}
+  .lang-pick button:hover{border-color:var(--accent);background:var(--accent-lite)}
+  .lang-pick button span{font-size:20px}
+
+  .inputrow{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:#fff;flex:0 0 auto}
+  .inputrow input{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;
+    font-family:var(--fb);font-size:14px;color:var(--ink);outline:none;min-width:0}
+  .inputrow input:focus{border-color:var(--accent)}
+  .inputrow input:disabled{background:var(--paper);color:var(--muted)}
+  .inputrow button{width:44px;height:44px;border:none;border-radius:12px;background:var(--accent);color:#fff;
+    font-size:17px;cursor:pointer;display:grid;place-items:center;flex:0 0 44px}
+  .inputrow button:disabled{background:var(--line);cursor:not-allowed}
+  .inputrow button:active:not(:disabled){transform:scale(.94)}
+  [dir="rtl"] .inputrow button span{display:inline-block;transform:scaleX(-1)}
+
+  .foot-note{text-align:center;color:var(--muted);font-size:11.5px;margin-top:14px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="backlink" href="index.html" id="backlink">← Back to site</a>
+  <header>
+    <div class="bot-badge">🤖</div>
+    <h1 id="pageTitle">GFP Assistant</h1>
+    <p id="pageSub">Ask anything about the General Foundation Program</p>
+  </header>
+
+  <div class="chat-card">
+    <div class="chat-top">
+      <div class="chat-top-left"><span class="dot"></span><span id="statusText">Online</span></div>
+      <div class="lang-switch" id="langSwitch" hidden>
+        <button data-lang="ar" id="btnAr">عربي</button>
+        <button data-lang="en" id="btnEn">EN</button>
+      </div>
+      <button class="resetbtn" id="resetBtn" title="Restart">↺</button>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="chips-row" id="chipsRow"></div>
+    <form class="inputrow" id="inputForm">
+      <input type="text" id="userInput" placeholder="Type your question..." autocomplete="off" disabled />
+      <button type="submit" id="sendBtn" disabled><span>➤</span></button>
+    </form>
+  </div>
+
+  <p class="foot-note" id="footNote">Built from the official UTAS-Nizwa GFP Prospectus &amp; orientation materials. For official matters, confirm with the Preparatory Studies Centre.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const messagesEl=$("#messages"), chipsRow=$("#chipsRow"), inputForm=$("#inputForm"),
+      userInput=$("#userInput"), sendBtn=$("#sendBtn"), resetBtn=$("#resetBtn"),
+      langSwitch=$("#langSwitch"), btnAr=$("#btnAr"), btnEn=$("#btnEn"),
+      pageTitle=$("#pageTitle"), pageSub=$("#pageSub"), statusText=$("#statusText"),
+      backlink=$("#backlink"), footNote=$("#footNote");
+
+let LANG=null;
+
+/* ---------------- UI strings ---------------- */
+const STR={
+  ar:{
+    title:"مساعد GFP 🤖", sub:"اسأل عن أي شي يخص البرنامج التأسيسي", status:"متصل الآن",
+    placeholder:"اكتب سؤالك هنا...", back:"← رجوع للموقع",
+    foot:"مبني على نشرة البرنامج التأسيسي (Prospectus) وملفات التوجيه الرسمية لجامعة UTAS - نزوى. لأي أمر رسمي، تأكد مع مركز الدراسات التحضيرية.",
+    welcome:"أهلاً وسهلاً بك 👋\nأنا مساعد افتراضي لطلاب البرنامج التأسيسي (GFP) في UTAS - نزوى.\nقبل ما نبدأ، أي لغة تفضل؟",
+    afterLang:"تمام 👍 اخترت العربي.\nتفضل، اسألني عن أي شي يخص البرنامج (الإنجليزي، الرياضيات، مهارات الحاسوب، الحضور، الامتحانات...) وبساعدك 🙌",
+    chooseTopic:"تقدر أيضاً تختار موضوع من هذي:",
+    notUnderstood:"ما قدرت أفهم سؤالك بالضبط 🤔 جرّب تكتبه بطريقة ثانية، أو اختر من المواضيع:",
+    maybeMean:"قصدك أحد هذي الأسئلة؟ 🤔",
+    somethingElse:"❓ شي ثاني",
+    backTopics:"⬅️ كل المواضيع",
+    greeting:"أهلاً فيك! 😊 اسألني عن أي شي يخص البرنامج التأسيسي.",
+    thanks:"العفو! 🙏 تحتاج شي ثاني؟",
+    whoami:"أنا بوت مساعد لطلاب البرنامج التأسيسي (GFP) في UTAS - نزوى، مبني على نشرة البرنامج الرسمية وملفات التوجيه. لأي أمر رسمي تأكد مع مركز الدراسات التحضيرية 🎓",
+    typeSomething:"اكتب سؤالك من فضلك ✍️",
+    restarted:"تم البدء من جديد 🔄",
+    langSet:"تم تغيير اللغة إلى العربي ✅",
+  },
+  en:{
+    title:"GFP Assistant 🤖", sub:"Ask anything about the General Foundation Program", status:"Online",
+    placeholder:"Type your question...", back:"← Back to site",
+    foot:"Built from the official UTAS-Nizwa GFP Prospectus & orientation materials. For official matters, please confirm with the Preparatory Studies Centre.",
+    welcome:"Hello and welcome! 👋\nI'm a virtual assistant for General Foundation Program (GFP) students at UTAS-Nizwa.\nBefore we start, which language do you prefer?",
+    afterLang:"Great 👍 English it is.\nGo ahead, ask me anything about the program (English, Math, Computing Skills, attendance, exams...) and I'll help 🙌",
+    chooseTopic:"You can also pick a topic:",
+    notUnderstood:"I couldn't quite understand that 🤔 try rephrasing, or pick a topic:",
+    maybeMean:"Did you mean one of these? 🤔",
+    somethingElse:"❓ Something else",
+    backTopics:"⬅️ All topics",
+    greeting:"Hey there! 😊 Ask me anything about the GFP program.",
+    thanks:"You're welcome! 🙏 Need anything else?",
+    whoami:"I'm a helper bot for GFP students at UTAS-Nizwa, built from the official Prospectus and orientation materials. For anything official, please confirm with the Preparatory Studies Centre 🎓",
+    typeSomething:"Please type your question ✍️",
+    restarted:"Restarted 🔄",
+    langSet:"Language switched to English ✅",
+  }
+};
+
+/* ---------------- Categories ---------------- */
+const CATS=[
+  {id:"program",   emoji:"🏫", ar:"البرنامج التأسيسي", en:"GFP Program"},
+  {id:"english",   emoji:"🔤", ar:"اللغة الإنجليزية",  en:"English"},
+  {id:"math",      emoji:"➗", ar:"الرياضيات",          en:"Mathematics"},
+  {id:"computing", emoji:"💻", ar:"مهارات الحاسوب",     en:"Computing Skills"},
+  {id:"grading",   emoji:"🏆", ar:"الدرجات والتقييم",    en:"Grades & Assessment"},
+  {id:"attendance",emoji:"📅", ar:"الحضور والغياب",      en:"Attendance"},
+  {id:"exams",     emoji:"📝", ar:"الامتحانات والقوانين", en:"Exams & Rules"},
+  {id:"resources", emoji:"📚", ar:"الكتب والمنصات",      en:"Books & Platforms"},
+];
+
+/* ---------------- Knowledge base ---------------- */
+const KB=[
+{id:"gfp_structure",cat:"program",
+  t:{ar:"مكونات البرنامج التأسيسي",en:"GFP components"},
+  kw:["gfp","structure","components","general foundation program","foundation program","البرنامج التاسيسي","مكونات البرنامج","هيكل البرنامج","اقسام البرنامج","مم يتكون"],
+  a:{ar:"البرنامج التأسيسي (GFP) يتكون من 4 مكونات:\n• اللغة الإنجليزية (GE1 → GE2 → GE3)\n• الرياضيات (رياضيات علوم اجتماعية MSS أو رياضيات علمية MS)\n• مهارات الحاسوب\n• مهارات الدراسة العامة (GSS) - مدمجة داخل كل المكونات\nومدة البرنامج المتوقعة سنة ونصف.",
+      en:"The GFP has 4 components:\n• English Language (GE1 → GE2 → GE3)\n• Mathematics (Mathematics for Social Sciences MSS or Mathematics for Sciences MS)\n• Computing Skills\n• General Study Skills (GSS) - embedded in all components\nExpected duration: 1.5 years."}},
+
+{id:"contact_hours_summary",cat:"program",
+  t:{ar:"عدد الساعات الأسبوعية",en:"Weekly contact hours"},
+  kw:["contact hours","hours per week","how many hours","عدد الساعات","الساعات الاسبوعيه","كم ساعه"],
+  a:{ar:"عدد الساعات الأسبوعية لكل مكون:\n• GE1 / GE2 / GE3: 18 ساعة أسبوعياً لكل مستوى\n• الرياضيات (MSS أو MS): 6 ساعات أسبوعياً\n• مهارات الحاسوب: 4 ساعات أسبوعياً",
+      en:"Weekly hours per component:\n• GE1 / GE2 / GE3: 18 hrs/week each level\n• Mathematics (MSS or MS): 6 hrs/week\n• Computing Skills: 4 hrs/week"}},
+
+{id:"max_study_period",cat:"program",
+  t:{ar:"أقصى مدة للبرنامج",en:"Maximum GFP duration"},
+  kw:["max period","maximum duration","how long is gfp","اقصى مده","كم مده البرنامج","مده البرنامج"],
+  a:{ar:"أقصى مدة للبقاء في البرنامج التأسيسي سنتان (سنة ونص عادي + فرصة إعادة). التأجيل غير مسموح إلا لأسباب مقبولة وبموافقة الجهة المختصة.",
+      en:"The maximum period to stay in the GFP is 2 years (1.5 years regular + one repeat chance). Postponement isn't allowed except for valid reasons with approval."}},
+
+{id:"withdrawal_policy",cat:"program",
+  t:{ar:"الانسحاب من مادة",en:"Withdrawing from a course"},
+  kw:["withdraw from course","can i drop","انسحب من ماده","انسحاب من ماده","اسحب ماده"],
+  a:{ar:"لا يُسمح للطالب بالانسحاب من أي مادة مسجلة ضمن البرنامج التأسيسي.",
+      en:"Students are NOT permitted to withdraw from any registered GFP course."}},
+
+{id:"postponement",cat:"program",
+  t:{ar:"تأجيل الفصل الدراسي",en:"Postponing a semester"},
+  kw:["postpone semester","defer","تاجيل الفصل","تاجيل التسجيل","اجل الفصل"],
+  a:{ar:"التأجيل غير مسموح إلا لأسباب قاهرة وبموافقة الجهة المختصة. فترة التأجيل الأولى (فصل واحد) لا تُحسب من الحد الأقصى لمدة البرنامج، لكن أي تمديد إضافي يُحسب منها. لا تُصرف مكافأة خلال فترة التأجيل.",
+      en:"Postponement is only allowed for insurmountable reasons with approval. The first postponement (one semester) doesn't count toward the max GFP period, but any further extension does. No allowance is paid during postponement."}},
+
+{id:"year1_registration",cat:"program",
+  t:{ar:"تسجيل مواد السنة الأولى أثناء البرنامج",en:"Registering Year 1 courses during GFP"},
+  kw:["year one courses","register diploma courses","high flyer register","تسجيل السنه الاولى","مواد الدبلوم","متفوقين تسجيل"],
+  a:{ar:"إذا أنهيت الإنجليزي والرياضيات (أو مهارات الحاسوب)، تقدر تسجل بعض مواد السنة الأولى مع بقية مواد البرنامج المتبقية، بشرط:\n• لا تتجاوز 6 ساعات معتمدة / مادتين إذا تبقى لك رياضيات\n• لا تتجاوز 9 ساعات معتمدة / 3 مواد إذا تبقى لك مهارات حاسوب\n• المادة ما تكون متطلب سابق لمادة البرنامج الباقية",
+      en:"If you finish English and Mathematics (or Computing Skills), you can register some Year 1 courses alongside your remaining GFP course, provided:\n• max 6 credit hrs / 2 courses if Math remains\n• max 9 credit hrs / 3 courses if Computing Skills remains\n• the course isn't a prerequisite for the remaining GFP course"}},
+
+{id:"mission_vision",cat:"program",
+  t:{ar:"رؤية ورسالة وقيم UTAS",en:"UTAS mission, vision & values"},
+  kw:["mission","vision","values","رؤيه الجامعه","رساله الجامعه","قيم الجامعه"],
+  a:{ar:"الرؤية: أن تكون UTAS من الجامعات الرائدة في التعليم التقني والتطبيقي للمساهمة في مجتمع مستدام قائم على المعرفة.\nالرسالة: بناء قدرات تنافسية وابتكارية عبر بيئة محفزة وتعاون فعّال مع المجتمع والصناعة لتعزيز التميّز في التعلّم والبحث والابتكار.\nالقيم: النزاهة، التميّز، التعاون، الولاء، والتنوع والشمول.",
+      en:"Vision: To be among the leading institutions in technological and applied education, contributing to a sustainable, knowledge-based society.\nMission: Build competitive and innovative capabilities through a stimulating environment and effective engagement with community and industry to promote excellence in learning, research and innovation.\nValues: Integrity, Excellence, Collaboration, Loyalty, Diversity & Inclusion."}},
+
+{id:"course_codes",cat:"program",
+  t:{ar:"رموز المواد والاختبارات",en:"Course & exam codes"},
+  kw:["course code","exam code","رمز الماده","رمز الاختبار","كود الماده"],
+  a:{ar:"رموز المواد: GE1=FPGE0001, GE2=FPGE0002, GE3=FPGE0003, MSS=FPMH0001, MS=FPMS0001, مهارات الحاسوب=FPCS0001.\nرموز الاختبارات: تحديد المستوى ELPT0001، التحقق ELVT0001/0002، الإعفاء WTEL0003، التحدي CTFP0002، الخروج (إنجليزي) EXEL0003، دخول الرياضيات MAET0001، خروج الرياضيات EXMH0001/EXMS0001، دخول الحاسوب CSET0001، خروج الحاسوب EXCS0001.",
+      en:"Course codes: GE1=FPGE0001, GE2=FPGE0002, GE3=FPGE0003, MSS=FPMH0001, MS=FPMS0001, Computing Skills=FPCS0001.\nExam codes: Placement ELPT0001, Validation ELVT0001/0002, Waiver WTEL0003, Challenge CTFP0002, English Exit EXEL0003, Math Entry MAET0001, Math Exit EXMH0001/EXMS0001, Computing Entry CSET0001, Computing Exit EXCS0001."}},
+
+{id:"english_levels",cat:"english",
+  t:{ar:"مستويات اللغة الإنجليزية",en:"English levels"},
+  kw:["english levels","ge1","ge2","ge3","general english","مستويات الانجليزي","اللغه الانجليزيه","جي اي"],
+  a:{ar:"مكوّن الإنجليزي فيه 3 مستويات: GE1 → GE2 → GE3، كل مستوى 18 ساعة أسبوعياً، ويشمل (قراءة وكتابة) + (استماع ومحادثة)، وفي GE3 يُضاف مشروع وعرض تقديمي.",
+      en:"The English component has 3 levels: GE1 → GE2 → GE3, 18 hrs/week each, covering Reading & Writing + Listening & Speaking, and GE3 adds a Project & Presentation."}},
+
+{id:"placement_test",cat:"english",
+  t:{ar:"اختبار تحديد المستوى (EPT)",en:"English Placement Test (EPT)"},
+  kw:["placement test","ept","english entry test","اختبار تحديد المستوى","اختبار القبول الانجليزي"],
+  a:{ar:"كل طالب جديد يسوي اختبار تحديد المستوى (EPT). حسب الدرجة:\n• 0-45 → GE1\n• 46-69 → GE2\n• 70-100 → GE3 (ومن يحصل 78 فأكثر يُعتبر 'متفوق' ويسوي اختبار الإعفاء)",
+      en:"All new students take the English Placement Test (EPT):\n• 0-45 → GE1\n• 46-69 → GE2\n• 70-100 → GE3 (score ≥78 = 'high-flyer', eligible for the Waiver Test)"}},
+
+{id:"waiver_test",cat:"english",
+  t:{ar:"اختبار الإعفاء (EWT)",en:"English Waiver Test (EWT)"},
+  kw:["waiver test","ewt","high flyer","اختبار الاعفاء","متفوق"],
+  a:{ar:"المتفوقون (EPT ≥ 78) يسوون اختبار الإعفاء. إذا حصلوا 70 فأكثر → يُعفون كلياً من مكوّن الإنجليزي. وإذا أقل من 70 → يدرسون GE3.",
+      en:"High-flyers (EPT ≥78) sit the Waiver Test. Score ≥70 → fully exempted from the English component. Below 70 → must study GE3."}},
+
+{id:"challenge_test",cat:"english",
+  t:{ar:"اختبار التحدي",en:"English Challenge Test"},
+  kw:["challenge test","ge1 challenge","اختبار التحدي"],
+  a:{ar:"لطلاب GE1 الحاصلين على تقدير A أو A-. يُعقد خلال أسبوع التهيئة، ومن يحصل 80 فأكثر يتخطى GE2 وينتقل مباشرة إلى GE3.",
+      en:"For GE1 students who achieve an A or A-. Held during induction week; score ≥80 → skip GE2 and move directly to GE3."}},
+
+{id:"validation_test",cat:"english",
+  t:{ar:"اختبار التحقق من المستوى",en:"English Placement Validation Test"},
+  kw:["validation test","elvt","اختبار التحقق"],
+  a:{ar:"يُعطى لطلاب GE1 وGE2 اللي مستواهم يبدو أعلى مما وُضعوا فيه، خلال أول أسبوعين من الفصل. من يحصل 80 فأكثر → يترفّع للمستوى التالي.",
+      en:"Given to GE1/GE2 students whose proficiency seems higher than their placed level, within the first 2 weeks of the semester. Score ≥80 → upgraded to the next level."}},
+
+{id:"english_exit_exam",cat:"english",
+  t:{ar:"اختبار الخروج (إنجليزي)",en:"English Exit Exam"},
+  kw:["exit exam english","exel","اختبار الخروج الانجليزي","امتحان الخروج"],
+  a:{ar:"للطلاب الموقوفين اللي استنفدوا فرصة الإعادة. يُمنحون فرصتين، ويُعقد الاختبار 4 مرات بالسنة (بداية ونهاية كل فصل). درجة النجاح 50%. أو تقديم شهادة IELTS/TOEFL معتمدة.",
+      en:"For suspended students who've exhausted their repeat chance. 2 chances, offered 4x/year (start & end of each semester). Pass mark 50%, or submit a valid IELTS/TOEFL certificate."}},
+
+{id:"english_assessment",cat:"english",
+  t:{ar:"تقييم مستويات الإنجليزي",en:"English assessment scheme"},
+  kw:["english assessment","ge grading","ca fe","تقييم الانجليزي","درجات الانجليزي","نظام التقييم"],
+  a:{ar:"التقييم المستمر (CA) 50% (منتصف الفصل 30% + مكونات أخرى 20%) + الامتحان النهائي (FE) 50%.\nللنجاح لازم: الدرجة التراكمية ≥50 والامتحان النهائي ≥50 معاً.",
+      en:"Continuous Assessment (CA) 50% (Midterm 30% + other CA 20%) + Final Exam (FE) 50%.\nTo pass: cumulative mark ≥50 AND the Final Exam itself ≥50."}},
+
+{id:"english_ca_breakdown",cat:"english",
+  t:{ar:"تفاصيل درجات الإنجليزي",en:"English CA breakdown"},
+  kw:["midterm breakdown","oral presentation","e-learning marks","تفصيل درجات الانجليزي","العرض الشفوي","درجات السبارك"],
+  a:{ar:"منتصف الفصل 30% (كتابة 10 + استماع 10 + قراءة 10) + مكونات أخرى 20% (عرض شفوي 10% + أنشطة إلكترونية SPARK 10%). الامتحان النهائي 50% موزع بالتساوي: كتابة/استماع/قراءة/محادثة 12.5% لكل مهارة.",
+      en:"Midterm 30% (Writing 10 + Listening 10 + Reading 10) + Other CA 20% (Oral presentation 10% + SPARK e-learning activities 10%). Final Exam 50% split evenly: Writing/Listening/Reading/Speaking 12.5% each."}},
+
+{id:"math_component",cat:"math",
+  t:{ar:"مكوّن الرياضيات",en:"Mathematics component"},
+  kw:["mathematics","math","mss","ms course","الرياضيات","ماث","ماده الرياضيات"],
+  a:{ar:"مادتان حسب التخصص: رياضيات للعلوم الاجتماعية (MSS) أو رياضيات للعلوم (MS)، 6 ساعات أسبوعياً. الدخول عبر اختبار دخول الرياضيات (جزأين)، والنجاح في الجزأين يعفيك من دراسة المادة.",
+      en:"Two courses depending on specialization: Mathematics for Social Sciences (MSS) or Mathematics for Sciences (MS), 6 hrs/week. Entry via the Mathematics Entry Test (2 parts); passing both parts exempts you from the course."}},
+
+{id:"math_entry_test",cat:"math",
+  t:{ar:"اختبار دخول الرياضيات",en:"Mathematics Entry Test"},
+  kw:["math entry test","met","اختبار دخول الرياضيات","اختبار الرياضيات"],
+  a:{ar:"يُعطى لكل طالب جديد، جزأين، لازم تنجح بالجزء الأول عشان تدخل الجزء الثاني، والنجاح بالجزأين يعفيك من دراسة المادة. درجة النجاح لكل جزء 50%.",
+      en:"Given to all new students, 2 parts — you must pass Part 1 to sit Part 2. Passing both parts exempts you from the course. Pass mark for each part is 50%."}},
+
+{id:"math_assessment",cat:"math",
+  t:{ar:"تقييم مادة الرياضيات",en:"Mathematics assessment"},
+  kw:["math assessment","math grading","module 1 module 2","تقييم الرياضيات","درجات الرياضيات"],
+  a:{ar:"الوحدة 1 = 40% (كويز10 + واجب5 + دراسة ذاتية5 + منتصف الفصل20). الوحدة 2 = 60% (كويز10 + واجب5 + دراسة ذاتية5 + نهائي40).\nللنجاح لازم ≥50% في الوحدة 2 و≥50% بالدرجة التراكمية الكلية.",
+      en:"Module 1 = 40% (quiz 10 + assignment 5 + self-study 5 + midterm 20). Module 2 = 60% (quiz 10 + assignment 5 + self-study 5 + final 40).\nTo pass: ≥50% in Module 2 AND ≥50% overall cumulative."}},
+
+{id:"math_exit_exam",cat:"math",
+  t:{ar:"اختبار الخروج (رياضيات)",en:"Mathematics Exit Exam"},
+  kw:["math exit exam","exmh","exms","اختبار خروج الرياضيات"],
+  a:{ar:"للطلاب اللي رسبوا مرتين ويُوقفون فصل دراسي، يُمنحون فرصتين خلال فترة الإيقاف، ويُعقد الاختبار مرتين بالفصل.",
+      en:"For students who failed twice and are suspended for one semester. 2 chances during the suspension period; the exam is offered twice per semester."}},
+
+{id:"computing_skills",cat:"computing",
+  t:{ar:"مكوّن مهارات الحاسوب",en:"Computing Skills component"},
+  kw:["computing skills","computer skills","ict","مهارات الحاسوب","ماده الحاسوب"],
+  a:{ar:"مادة واحدة، 4 ساعات أسبوعياً، تُطرح من مستوى GE1 فما فوق. الدخول عبر اختبار دخول مهارات الحاسوب (CSET) - جزأين، درجة النجاح 50%. يُعفى الطالب بشهادة ICDL أو IC3 سارية.",
+      en:"One course, 4 hrs/week, offered from GE1 onwards. Entry via the Computing Skills Entry Test (CSET) — 2 parts, pass mark 50%. Exempted with a valid ICDL or IC3 certificate."}},
+
+{id:"cs_assessment",cat:"computing",
+  t:{ar:"تقييم مهارات الحاسوب",en:"Computing Skills assessment"},
+  kw:["computing skills assessment","cs grading","تقييم الحاسوب","درجات الحاسوب"],
+  a:{ar:"التقييم المستمر 50% + الامتحان النهائي 50%، وللنجاح لازم الدرجة التراكمية ≥50%.",
+      en:"Continuous Assessment 50% + Final Exam 50%; to pass, the cumulative mark must be ≥50%."}},
+
+{id:"cs_exit_exam",cat:"computing",
+  t:{ar:"اختبار الخروج (حاسوب)",en:"Computing Skills Exit Exam"},
+  kw:["computing exit exam","excs","اختبار خروج الحاسوب"],
+  a:{ar:"لمن يرسب مرتين، يُوقف فصل دراسي ويُمنح فرصتين خلال فترة الإيقاف، أو يقدّم شهادة IT معتمدة.",
+      en:"For students who fail twice: suspended for one semester with 2 chances during that period, or they may submit a valid IT certificate."}},
+
+{id:"grading_scale",cat:"grading",
+  t:{ar:"سلم الدرجات",en:"GFP grading scale"},
+  kw:["grading scale","letter grade","سلم الدرجات","التقديرات","الدرجات الحرفيه"],
+  a:{ar:"A: 95-100 | A-: 90-94 | B+: 85-89 | B: 80-84 | B-: 75-79 | C+: 70-74 | C: 65-69 | C-: 60-64 | D+: 55-59 | D: 50-54 | F: 0-49",
+      en:"A: 95-100 | A-: 90-94 | B+: 85-89 | B: 80-84 | B-: 75-79 | C+: 70-74 | C: 65-69 | C-: 60-64 | D+: 55-59 | D: 50-54 | F: 0-49"}},
+
+{id:"language_admission",cat:"grading",
+  t:{ar:"معيار القبول اللغوي للدبلوم/البكالوريوس",en:"Language admission criterion"},
+  kw:["language admission","ielts","toefl","diploma bachelor english","معيار القبول اللغوي","شهاده الايلتس"],
+  a:{ar:"دبلوم (GE3: 50-61) ودبلوم عالي (GE3: 62-69): آيلتس 4.5 (ولا مهارة أقل من 4) أو توفل iBT 56 (ولا قسم أقل من 13).\nبكالوريوس (GE3: 70-100): آيلتس 5 فأكثر (ولا مهارة أقل من 4.5) أو توفل iBT 64 فأكثر (ولا قسم أقل من 15).",
+      en:"Diploma (GE3: 50-61) & Advanced Diploma (GE3: 62-69): IELTS 4.5 (no band below 4) or TOEFL iBT 56 (no section below 13).\nBachelor (GE3: 70-100): IELTS ≥5 (no band below 4.5) or TOEFL iBT ≥64 (no section below 15)."}},
+
+{id:"attendance_rules",cat:"attendance",
+  t:{ar:"نسبة الغياب المسموحة",en:"Allowed absence percentage"},
+  kw:["attendance","absence percentage","الحضور","نسبه الغياب","كم نسبه الغياب"],
+  a:{ar:"النسبة المسموحة للغياب: 15% في الإنجليزي، 20% في الرياضيات ومهارات الحاسوب.\nالإنذار الأول: إنجليزي 5% / رياضيات وحاسوب 10%.\nالإنذار الثاني: إنجليزي 10% / رياضيات وحاسوب 15%.\nالحرمان من الامتحان النهائي: تجاوز 15% (إنجليزي) أو 20% (رياضيات وحاسوب).",
+      en:"Allowed absence: 15% for English, 20% for Math & Computing Skills.\nFirst warning: English 5% / Math & CS 10%.\nSecond warning: English 10% / Math & CS 15%.\nDebarred from final exam: over 15% (English) or 20% (Math & CS)."}},
+
+{id:"attendance_excuses",cat:"attendance",
+  t:{ar:"الأعذار المقبولة للغياب",en:"Valid excuses for absence"},
+  kw:["valid excuse","sick leave","absence excuse","عذر الغياب","تقرير مرضي","اعذار الغياب"],
+  a:{ar:"الأعذار المقبولة:\n• المرض: تقرير مرضي من مستشفى/مجمع حكومي\n• المواعيد الطبية: إبلاغ المعلم مسبقاً وتقديم إثبات\n• وفاة قريب من الدرجة الأولى: مستند رسمي خلال 3 أيام\n• الأنشطة اللامنهجية: بموافقة مسبقة من DAVC-ESSS",
+      en:"Valid excuses:\n• Illness: sick leave certificate from a government hospital/polyclinic\n• Medical appointments: inform the teacher in advance + provide proof\n• Death of a first-degree relative: official document within 3 days\n• Extracurricular activities: prior approval from DAVC-ESSS"}},
+
+{id:"w_fw_grades",cat:"attendance",
+  t:{ar:"معنى W و FW",en:"What do W and FW mean"},
+  kw:["w grade","fw grade","withdrawal","انسحاب بعذر","رسوب بسبب الغياب","اف دبليو"],
+  a:{ar:"W = انسحاب بعذر مقبول (يُحرم من الامتحان النهائي بسبب غياب مبرر).\nFW = رسوب بسبب غياب غير مبرر.\nإذا حصل الطالب على أكثر من W مرتين في أي مكون، تتحول تلقائياً إلى FW.",
+      en:"W = Withdrawal with a valid excuse (debarred from the final exam due to excused absence).\nFW = Failure for unexcused absence.\nMore than two Ws in a component automatically becomes an FW."}},
+
+{id:"suspension",cat:"attendance",
+  t:{ar:"الإيقاف (التعليق)",en:"Suspension"},
+  kw:["suspension","suspended","ايقاف الطالب","التعليق من البرنامج"],
+  a:{ar:"من يرسب في مكون مرتين يُوقف فصل دراسي واحد، ويُمنح فرصتين لاختبار الخروج و/أو تقديم شهادة كفاءة معتمدة. إذا استنفد الفرصتين بدون نجاح → يُفصل من الجامعة.",
+      en:"Failing a component twice leads to a one-semester suspension, with 2 chances for the Exit Exam and/or submitting a valid proficiency certificate. Exhausting both without success → dismissal from the university."}},
+
+{id:"exam_rules",cat:"exams",
+  t:{ar:"قوانين الامتحانات",en:"Examination guidelines"},
+  kw:["exam rules","exam id","exam guidelines","قوانين الامتحان","تعليمات الامتحان"],
+  a:{ar:"• أحضر هوية سارية (بطاقة الجامعة/المدنية/رخصة القيادة/هوية رقمية).\n• يُسمح بالدخول حتى 30 دقيقة من بداية الامتحان.\n• لا يُسلَّم الورق إلا بعد مرور نصف وقت الامتحان.\n• تُسلَّم الورقة مرة واحدة فقط، بدون تعديل بعدها.\n• غياب عن تقييم مستمر؟ قدّم عذر لرئيس الوحدة خلال 3 أيام عمل لترتيب تعويضي.",
+      en:"• Bring a valid ID (student/civil/driving license/digital ID).\n• Entry allowed up to 30 minutes after the exam starts.\n• Papers can only be handed in after half the exam time has passed.\n• Papers are submitted only once, no changes after.\n• Missed a CA task? Submit a valid excuse to the PSC Unit Head within 3 working days for a make-up."}},
+
+{id:"missed_final_exam",cat:"exams",
+  t:{ar:"الغياب عن الامتحان النهائي",en:"Missing the final exam"},
+  kw:["missed final exam","ic grade","missed exam","غياب عن النهائي","درجه اي سي"],
+  a:{ar:"الغياب عن الامتحان النهائي يعطيك درجة (IC - غير مكتمل). لازم تقدّم مبرر خلال 3 أيام عمل لمركز القبول والتسجيل لترتيب امتحان تعويضي. وإذا غبت عن التعويضي أيضاً → تحصل F.",
+      en:"Missing the final exam gives you an IC (Incomplete) grade. You must submit a justification within 3 working days to the Admission & Registration Center to arrange a make-up exam. Missing the make-up too → you get an F."}},
+
+{id:"appeal",cat:"exams",
+  t:{ar:"الاعتراض على الدرجة",en:"Grade appeal process"},
+  kw:["appeal","grade review","اعتراض على الدرجه","مراجعه الدرجه","تظلم"],
+  a:{ar:"تقدّم طلب الاعتراض خلال 3 أيام عمل من إعلان النتيجة. الاعتراض على مادة واحدة مجاني، وتُطبّق رسوم على البقية (تُرد إذا تبيّن وجود خطأ). القرار يصدر قبل نهاية الأسبوع الأول من الفصل التالي، وإذا ما وصل رد يُعتبر مرفوض.",
+      en:"Submit your appeal within 3 working days of the result announcement. The first course appeal is free; fees apply to others (refundable if an error is found). Decisions are due by the end of the first week of the next semester — no response means rejected."}},
+
+{id:"cheating",cat:"exams",
+  t:{ar:"الغش والنزاهة الأكاديمية",en:"Cheating & academic integrity"},
+  kw:["cheating","plagiarism","غش","انتحال","الغش بالامتحان"],
+  a:{ar:"أول مرة غش مؤكد → رسوب بالمادة. ثاني مرة → رسوب + منع من التسجيل الفصل اللي بعده. ثالث مرة → فصل من الجامعة. تنطبق القوانين على الكويزات والامتحانات والتقارير والمشاريع كلها.",
+      en:"1st confirmed cheating → fail the course. 2nd → fail + barred from registering next semester. 3rd → dismissal from the university. Applies to quizzes, exams, reports and projects."}},
+
+{id:"dress_code",cat:"exams",
+  t:{ar:"اللباس والانضباط",en:"Dress code & discipline"},
+  kw:["dress code","discipline","اللباس","الزي","الانضباط"],
+  a:{ar:"على جميع طلاب البرنامج الالتزام بالزي الجامعي الرسمي وقواعد السلوك والنزاهة الأكاديمية طول فترة الدراسة.",
+      en:"All GFP students must follow the official university dress code and the rules of academic conduct and integrity."}},
+
+{id:"feedback_rights",cat:"exams",
+  t:{ar:"حق الطالب في التغذية الراجعة",en:"Student's right to feedback"},
+  kw:["feedback","marking criteria","حق الطالب","التغذيه الراجعه","معايير التصحيح"],
+  a:{ar:"من حق الطالب: معرفة معايير التصحيح قبل أي تقييم، والحصول على تغذية راجعة واضحة ومفصلة وبوقتها (شفهياً أو كتابياً) على أي نشاط صفي أو تقييم مستمر أو امتحان تجريبي.",
+      en:"Students have the right to: know the marking criteria before any assessment, and receive timely, detailed feedback (oral or written) on any class practice, continuous assessment, or mock exam."}},
+
+{id:"books",cat:"resources",
+  t:{ar:"الكتب الدراسية",en:"Textbooks"},
+  kw:["books","textbook","كتب","الكتب الدراسيه"],
+  a:{ar:"يستلم الطالب كتابين للإنجليزي من المرشد الأكاديمي (Group Tutor) في بداية الفصل، ويوقّع على استلامهم، ويرجعهم آخر الفصل. إذا ضاع أو تلف الكتاب، يتحمّل الطالب شراء بديل من موزع الكتب.",
+      en:"Students receive 2 English books from their group tutor at the start of the semester, sign for them, and return them by the end of the semester. If a book is lost or damaged, the student must buy a replacement from the book provider."}},
+
+{id:"platforms",cat:"resources",
+  t:{ar:"المنصات الرقمية",en:"Digital platforms"},
+  kw:["platforms","spark","moodle","teams","المنصات","سبارك","مودل"],
+  a:{ar:"التواصل: البريد الإلكتروني و MS Teams.\nالدراسة المستقلة: SPARK و Moodle.\nمنصة SPARK فيها 14 نشاط إلكتروني (7 قراءة وكتابة + 7 استماع ومحادثة) وتشكل 10% من التقييم المستمر، وتُحدَّد مواعيدها قبل وبعد منتصف الفصل. التسليم المتأخر = صفر.",
+      en:"Communication: Email & MS Teams.\nIndependent study: SPARK & Moodle.\nSPARK hosts 14 e-learning activities (7 Reading & Writing + 7 Listening & Speaking), worth 10% of CA, scheduled before and after the midterm. Late submission = zero."}},
+
+{id:"clubs",cat:"resources",
+  t:{ar:"الأندية والساعات المكتبية",en:"Clubs & office hours"},
+  kw:["clubs","english club","writing club","office hours","نادي","النادي الانجليزي","ساعات مكتبيه"],
+  a:{ar:"يوجد بمركز الدراسات التحضيرية نادي إنجليزي ونادي كتابة، بحصة أسبوعية يوم الثلاثاء. للساعات المكتبية، راجع جدول معلمك.",
+      en:"The Preparatory Studies Centre has an English Club and a Writing Club, one weekly session on Tuesday. For office hours, check your instructor's schedule."}},
+
+{id:"students_voice",cat:"resources",
+  t:{ar:"تقديم شكوى (صوت الطالب)",en:"Filing a complaint (Students' Voice)"},
+  kw:["complaint","students voice","شكوى","صوت الطالب","اشتكي"],
+  a:{ar:"تقدر تقدّم أي شكوى أو ملاحظة عبر نظام 'صوت الطالب' المتوفر داخل نظام CIMS.",
+      en:"You can submit any complaint or feedback through the 'Students' Voice' feature available inside the CIMS system."}},
+];
+
+/* precompute normalized keywords */
+KB.forEach(e=>{ e._kw=e.kw.map(normalize); });
+
+/* ---------------- Helpers ---------------- */
+function normalize(s){
+  if(!s) return "";
+  s=s.toString().trim().toLowerCase();
+  s=s.replace(/[ً-ْٰـ]/g,"");
+  s=s.replace(/[إأآا]/g,"ا");
+  s=s.replace(/ى/g,"ي");
+  s=s.replace(/ة/g,"ه");
+  s=s.replace(/[؟?!.,\/#$%\^&\*;:{}=_`~()"«»]/g," ");
+  s=s.replace(/\s+/g," ").trim();
+  return s;
+}
+function scoreEntry(inputNorm,e){
+  let score=0;
+  for(const kw of e._kw){
+    if(!kw) continue;
+    if(inputNorm===kw){ score+=4; continue; }
+    if(inputNorm.includes(kw)) score+=Math.max(1,kw.split(" ").length);
+  }
+  return score;
+}
+function getMatches(inputNorm){
+  return KB.map(e=>({e,score:scoreEntry(inputNorm,e)}))
+           .filter(x=>x.score>0)
+           .sort((a,b)=>b.score-a.score);
+}
+const GREETINGS=["مرحبا","هلا","هلاو","السلام عليكم","سلام","hi","hello","hey","مساء الخير","صباح الخير","يعطيك العافيه"].map(normalize);
+const THANKS=["شكرا","مشكور","يعطيك العافيه على المساعده","thanks","thank you","thank u"].map(normalize);
+const WHOAMI=["من انت","مين انت","ايش انت","who are you","what are you","انت بوت"].map(normalize);
+function includesAny(inputNorm,list){ return list.some(w=>w && inputNorm.includes(w)); }
+
+/* ---------------- Rendering ---------------- */
+function scrollBottom(){ messagesEl.scrollTop=messagesEl.scrollHeight; }
+function addMsg(text,who){
+  const d=document.createElement("div");
+  d.className="msg "+who;
+  d.textContent=text;
+  messagesEl.appendChild(d);
+  scrollBottom();
+  return d;
+}
+function showTyping(){
+  const d=document.createElement("div");
+  d.className="typing"; d.id="typingInd";
+  d.innerHTML="<span></span><span></span><span></span>";
+  messagesEl.appendChild(d);
+  scrollBottom();
+}
+function hideTyping(){ const t=$("#typingInd"); if(t) t.remove(); }
+function clearChips(){ chipsRow.innerHTML=""; }
+function addChip(label,onClick,alt){
+  const b=document.createElement("button");
+  b.className="chip-btn"+(alt?" alt":"");
+  b.type="button";
+  b.textContent=label;
+  b.onclick=onClick;
+  chipsRow.appendChild(b);
+  return b;
+}
+function botSay(text,delay,cb){
+  showTyping();
+  setTimeout(()=>{ hideTyping(); addMsg(text,"bot"); if(cb) cb(); }, delay||500);
+}
+
+/* ---------------- Flow ---------------- */
+function start(){
+  addMsg(STR.ar.welcome+"\n\n"+STR.en.welcome,"bot");
+  clearChips();
+  const row=document.createElement("div");
+  row.className="lang-pick";
+  const bAr=document.createElement("button");
+  bAr.innerHTML="<span>🇴🇲</span>العربي";
+  bAr.onclick=()=>pickLang("ar");
+  const bEn=document.createElement("button");
+  bEn.innerHTML="<span>🇬🇧</span>English";
+  bEn.onclick=()=>pickLang("en");
+  row.appendChild(bAr); row.appendChild(bEn);
+  chipsRow.appendChild(row);
+}
+
+function pickLang(lang){
+  LANG=lang;
+  applyLangUI();
+  addMsg(lang==="ar"?"العربي":"English","user");
+  clearChips();
+  botSay(STR[lang].afterLang,500,()=>{
+    userInput.disabled=false; sendBtn.disabled=false;
+    userInput.placeholder=STR[lang].placeholder;
+    userInput.focus();
+    showTopicChips(true);
+    langSwitch.hidden=false;
+    updateLangSwitchUI();
+  });
+}
+
+function applyLangUI(){
+  document.documentElement.lang=LANG;
+  document.documentElement.dir=LANG==="ar"?"rtl":"ltr";
+  pageTitle.textContent=STR[LANG].title;
+  pageSub.textContent=STR[LANG].sub;
+  statusText.textContent=STR[LANG].status;
+  backlink.textContent=STR[LANG].back;
+  footNote.textContent=STR[LANG].foot;
+  document.title=STR[LANG].title;
+}
+function updateLangSwitchUI(){
+  btnAr.classList.toggle("on",LANG==="ar");
+  btnEn.classList.toggle("on",LANG==="en");
+}
+
+function showTopicChips(withLabel){
+  clearChips();
+  if(withLabel){
+    const lbl=document.createElement("div");
+    lbl.style.cssText="width:100%;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px";
+    lbl.textContent=STR[LANG].chooseTopic;
+    chipsRow.appendChild(lbl);
+  }
+  CATS.forEach(c=>{
+    addChip(c.emoji+" "+c[LANG],()=>openCategory(c));
+  });
+}
+
+function openCategory(cat){
+  addMsg(cat.emoji+" "+cat[LANG],"user");
+  clearChips();
+  const items=KB.filter(e=>e.cat===cat.id);
+  botSay(cat[LANG]+" 👇",450,()=>{
+    items.forEach(it=>addChip(it.t[LANG],()=>askDirect(it)));
+    addChip(STR[LANG].backTopics,()=>{ clearChips(); showTopicChips(false); },true);
+  });
+}
+
+function askDirect(entry){
+  addMsg(entry.t[LANG],"user");
+  clearChips();
+  botSay(entry.a[LANG],550,()=>showTopicChips(false));
+}
+
+function handleFallback(){
+  botSay(STR[LANG].notUnderstood,500,()=>showTopicChips(false));
+}
+
+function handleAmbiguous(matches){
+  const top=matches[0].score;
+  const cands=matches.filter(m=>m.score>=top-2).slice(0,4);
+  botSay(STR[LANG].maybeMean,500,()=>{
+    cands.forEach(m=>addChip(m.e.t[LANG],()=>askDirect(m.e)));
+    addChip(STR[LANG].somethingElse,()=>{ clearChips(); showTopicChips(true); },true);
+  });
+}
+
+function processInput(raw){
+  const norm=normalize(raw);
+  if(!norm){ botSay(STR[LANG].typeSomething,300); return; }
+  if(includesAny(norm,GREETINGS)){ botSay(STR[LANG].greeting,450,()=>showTopicChips(false)); return; }
+  if(includesAny(norm,THANKS)){ botSay(STR[LANG].thanks,450); return; }
+  if(includesAny(norm,WHOAMI)){ botSay(STR[LANG].whoami,450); return; }
+
+  const matches=getMatches(norm);
+  if(matches.length===0){ handleFallback(); return; }
+  const top=matches[0], second=matches[1];
+  const confident = !second || (top.score-second.score>=2) || top.score>=5;
+  if(confident){ askDirect(top.e); }
+  else{ handleAmbiguous(matches); }
+}
+
+/* ---------------- Events ---------------- */
+inputForm.addEventListener("submit",e=>{
+  e.preventDefault();
+  const v=userInput.value.trim();
+  if(!v || !LANG) return;
+  addMsg(v,"user");
+  userInput.value="";
+  clearChips();
+  processInput(v);
+});
+btnAr.addEventListener("click",()=>{ if(LANG!=="ar"){ LANG="ar"; applyLangUI(); updateLangSwitchUI(); addMsg(STR.ar.langSet,"bot"); userInput.placeholder=STR.ar.placeholder; showTopicChips(false);} });
+btnEn.addEventListener("click",()=>{ if(LANG!=="en"){ LANG="en"; applyLangUI(); updateLangSwitchUI(); addMsg(STR.en.langSet,"bot"); userInput.placeholder=STR.en.placeholder; showTopicChips(false);} });
+resetBtn.addEventListener("click",()=>{
+  messagesEl.innerHTML=""; clearChips();
+  userInput.disabled=true; sendBtn.disabled=true; userInput.value="";
+  langSwitch.hidden=true;
+  LANG=null;
+  start();
+});
+
+start();
+})();
+</script>
+</body>
+</html>

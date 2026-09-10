@@ -27,6 +27,8 @@ const DATA = {
     kahoot_tag:"🎮 KAHOOT", kahoot_title:"Quiz time", kahoot_cta:"Tap to play on Kahoot ↗",
     cross_eyebrow:"Puzzle", cross_h:"Crossword puzzle", cross_p:"Solve five words and reveal a hidden message — tap the card to start.",
     cross_tag:"🧩 PUZZLE", cross_title:"Crossword", cross_cta:"Tap to play ↗",
+    bot_eyebrow:"Assistant", bot_h:"GFP student assistant", bot_p:"Got a question about the program, attendance, or exams? Chat with the bot — it answers from the official prospectus.",
+    bot_tag:"🤖 CHATBOT", bot_title:"Ask GFP Assistant", bot_cta:"Tap to chat ↗",
     activities:[
       {id:"jar",e:"🫙",t:"Magic Number Jar",d:"Shake the jar and draw a folded number — no repeats."},
       {id:"ball",e:"🎾",t:"Question Ball",d:"Toss the ball around — each student introduces themselves."},
@@ -189,6 +191,8 @@ const DATA = {
     kahoot_tag:"🎮 كاهوت", kahoot_title:"وقت المسابقة", kahoot_cta:"دوسي للعب على كاهوت ↗",
     cross_eyebrow:"لغز", cross_h:"لغز الكلمات المتقاطعة", cross_p:"حلّي خمس كلمات واكتشفي رسالة مخفية — دوسي على البطاقة للبدء.",
     cross_tag:"🧩 لغز", cross_title:"كلمات متقاطعة", cross_cta:"دوسي للعب ↗",
+    bot_eyebrow:"مساعد", bot_h:"مساعد طلاب البرنامج التأسيسي", bot_p:"عندك سؤال عن البرنامج أو الحضور أو الامتحانات؟ تكلّمي مع البوت — يجاوبك من النشرة الرسمية.",
+    bot_tag:"🤖 شات بوت", bot_title:"اسألي مساعد GFP", bot_cta:"دوسي للدردشة ↗",
     activities:[
       {id:"jar",e:"🫙",t:"الجرة العجيبة",d:"رُجّ الجرة واسحب ورقة برقم — بلا تكرار."},
       {id:"ball",e:"🎾",t:"كرة الأسئلة",d:"تبادلوا رمي الكرة — كل طالب يعرّف بنفسه."},
