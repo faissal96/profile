@@ -8,9 +8,9 @@ const DATA = {
     nav_office:"Office", nav_university:"University", nav_faq:"FAQ", nav_contact:"Contact",
     hero_eyebrow:"UTAS-Nizwa · General Foundation Program",
     hero_title:'Learn with <span class="grad">confidence</span>.',
-    hero_lead:"Welcome to General English (GE2) at UTAS-Nizwa! This is your space for reading, writing, listening and speaking with Mr. Yousef — plus classroom activities that make practice actually fun.",
+    hero_lead:"Welcome to General English (GE2) at UTAS-Nizwa! This is your space for reading, writing, listening and speaking with Mr. Faisal — plus classroom activities that make practice actually fun.",
     hero_cta1:"Try an activity", hero_cta2:"Meet your instructor",
-    inst_name:"Mr. Yousef Al-Harthi", inst_role:"General English (GE2) · Foundation Program",
+    inst_name:"Mr. Faisal Khalifa Al Shamakhi", inst_role:"General English (GE2) · Foundation Program",
     inst_h:"About your instructor", inst_p:"Helping foundation students build strong English — reading, writing, listening and speaking — and pass GE2 with confidence.",
     inst_focus_h:"Teaching focus", inst_courses_h:"Modules taught", inst_timeline_h:"Experience & milestones",
     research:["Reading & Writing","Listening & Speaking","Grammar & Lexis","Oral presentations","Building confidence"],
@@ -98,7 +98,7 @@ const DATA = {
     contact_follow:"Follow along",
     socials:[{i:"📸",l:"Instagram",u:""},{i:"💼",l:"LinkedIn",u:""},{i:"🐦",l:"X (Twitter)",u:""},{i:"🎓",l:"University page",u:""},{i:"📺",l:"YouTube",u:""}],
     f_name:"Your name", f_email:"Your email", f_msg:"Message", f_send:"Send message",
-    f_hint:"This opens your email app so you can send the message to Mr. Yousef.",
+    f_hint:"This opens your email app so you can send the message to Mr. Faisal.",
     footer:"Built for foundation students who learn by doing. © 2026 Speaking Hub.",
     ttl:{note:"Type two true statements and one false one, mark the lie, then play — the class guesses which card is the lie.",
       defaults:["I have visited three countries.","I can cook a full meal from scratch.","I once met a famous person."], lie:2},
@@ -166,9 +166,9 @@ const DATA = {
     nav_office:"المكتب", nav_university:"الجامعة", nav_faq:"الأسئلة", nav_contact:"تواصل",
     hero_eyebrow:"جامعة التقنية والعلوم التطبيقية بنزوى · البرنامج التأسيسي",
     hero_title:'تعلّم بكل <span class="grad">ثقة</span>.',
-    hero_lead:"أهلًا بك في مقرر الإنجليزية العامة (GE2) بجامعة التقنية والعلوم التطبيقية بنزوى! هذه مساحتك للقراءة والكتابة والاستماع والتحدّث مع الأستاذ يوسف — بالإضافة إلى أنشطة صفّية تجعل التدريب ممتعًا فعلًا.",
+    hero_lead:"أهلًا بك في مقرر الإنجليزية العامة (GE2) بجامعة التقنية والعلوم التطبيقية بنزوى! هذه مساحتك للقراءة والكتابة والاستماع والتحدّث مع الأستاذ فيصل — بالإضافة إلى أنشطة صفّية تجعل التدريب ممتعًا فعلًا.",
     hero_cta1:"جرّب نشاطًا", hero_cta2:"تعرّف على أستاذك",
-    inst_name:"الأستاذ يوسف الحارثي", inst_role:"الإنجليزية العامة (GE2) · البرنامج التأسيسي",
+    inst_name:"الأستاذ فيصل خليفة الشامخي", inst_role:"الإنجليزية العامة (GE2) · البرنامج التأسيسي",
     inst_h:"عن أستاذك", inst_p:"يساعد طلاب التأسيس على بناء إنجليزية قوية — قراءةً وكتابةً واستماعًا وتحدّثًا — واجتياز GE2 بثقة.",
     inst_focus_h:"محاور التدريس", inst_courses_h:"الموادّ التي يُدرّسها", inst_timeline_h:"الخبرة والمحطات",
     research:["القراءة والكتابة","الاستماع والتحدّث","القواعد والمفردات","العروض الشفهية","بناء الثقة"],
@@ -256,7 +256,7 @@ const DATA = {
     contact_follow:"تابعني",
     socials:[{i:"📸",l:"إنستغرام",u:""},{i:"💼",l:"لينكدإن",u:""},{i:"🐦",l:"إكس (تويتر)",u:""},{i:"🎓",l:"صفحة الجامعة",u:""},{i:"📺",l:"يوتيوب",u:""}],
     f_name:"اسمك", f_email:"بريدك", f_msg:"الرسالة", f_send:"إرسال الرسالة",
-    f_hint:"يفتح تطبيق البريد لديك لإرسال الرسالة إلى الأستاذ يوسف.",
+    f_hint:"يفتح تطبيق البريد لديك لإرسال الرسالة إلى الأستاذ فيصل.",
     footer:"صُمّم لطلاب التأسيس الذين يتعلّمون بالممارسة. © ٢٠٢٦ مركز الخطابة.",
     ttl:{note:"اكتب عبارتين صحيحتين وواحدة كاذبة، وحدّد الكذبة، ثم ابدأ — والصف يخمّن أي بطاقة هي الكذبة.",
       defaults:["زُرتُ ثلاث دول.","أستطيع طهي وجبة كاملة من الصفر.","قابلتُ شخصًا مشهورًا مرة."], lie:2},
@@ -520,7 +520,7 @@ function setLang(l){
   html.lang=l; html.dir=(l==="ar"?"rtl":"ltr"); html.classList.toggle("ar",l==="ar");
   $("#langLabel").textContent = l==="ar" ? "EN" : "عربي";
   setTimeout(()=>{ render(); html.classList.remove("fade");
-    document.title = l==="ar" ? "الأستاذ يوسف الحارثي — مركز الخطابة" : "Mr. Yousef Al-Harthi — Foundation Speaking Hub"; }, 200);
+    document.title = l==="ar" ? "فيصل خليفة الشامخي — بورتفوليو فيصل" : "Faisal Khalifa Al Shamakhi — Faisal's Portfolio"; }, 200);
 }
 $("#langBtn").onclick = ()=> setLang(LANG==="en"?"ar":"en");
 
