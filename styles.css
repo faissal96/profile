@@ -8,6 +8,13 @@
   --gold:#222831;
 
   --ink:#222831; --ink-soft:#393e46; --ink-faint:#6d7278;
+
+  /* نسخة RGB من نفس الألوان أعلاه — تُستخدم بدل color-mix() غير المدعومة في بعض المتصفحات/المتصفح المدمج داخل تطبيقات مثل إنستغرام.
+     لو غيّرتِ لون --accent أو --blue/--rose أو --ink/--c4/--gold أعلاه، لازم تحدّثين قيمة RGB المطابقة هنا كمان. */
+  --accent-rgb:214,90,49;   /* = --accent / --coral / --c3 (#d65a31) */
+  --blue-rgb:57,62,70;      /* = --blue / --rose / --c2 (#393e46) */
+  --ink-rgb:34,40,49;       /* = --ink / --c4 / --gold (#222831) */
+
   --page: var(--c1);
   --glass: rgba(255,255,255,.55);
   --glass-2: rgba(255,255,255,.38);
@@ -62,8 +69,8 @@ img{max-width:100%}
 .eyebrow{
   display:inline-flex; align-items:center; gap:8px; font-family:var(--fd);
   font-size:.82rem; font-weight:600; color:var(--accent);
-  background:color-mix(in srgb, var(--accent) 12%, transparent);
-  padding:6px 14px; border-radius:50px; border:1px solid color-mix(in srgb,var(--accent) 25%, transparent);
+  background:rgba(var(--accent-rgb),.12);
+  padding:6px 14px; border-radius:50px; border:1px solid rgba(var(--accent-rgb),.25);
 }
 .section{padding:clamp(56px,8vw,110px) 0; position:relative}
 .section > .wrap > .head{max-width:660px; margin-bottom:44px}
@@ -80,15 +87,15 @@ html.dark .blob{mix-blend-mode:screen; opacity:.4}
 .blob.b3{width:360px;height:360px;background:var(--blue);left:30%;bottom:-120px;animation:drift 25s ease-in-out infinite}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
 
-.shapes{position:fixed; inset:0; z-index:-1; pointer-events:none}
-.cube{position:absolute; width:60px; height:60px; transform-style:preserve-3d; animation:spin3d 18s linear infinite}
-.cube .f{position:absolute; inset:0; border:1.5px solid color-mix(in srgb, var(--blue) 55%, transparent); background:color-mix(in srgb, var(--blue) 9%, transparent); border-radius:8px}
-.cube .f:nth-child(1){transform:translateZ(30px)} .cube .f:nth-child(2){transform:rotateY(180deg) translateZ(30px)}
-.cube .f:nth-child(3){transform:rotateY(90deg) translateZ(30px)} .cube .f:nth-child(4){transform:rotateY(-90deg) translateZ(30px)}
-.cube .f:nth-child(5){transform:rotateX(90deg) translateZ(30px)} .cube .f:nth-child(6){transform:rotateX(-90deg) translateZ(30px)}
+/* مجسّمات الخلفية: كانت مكعّبات ثلاثية الأبعاد (3D) تعتمد على color-mix() و transform-style:preserve-3d —
+   هذا التركيب يفشل أو يظهر كمربع رمادي غير منسّق فوق النص في بعض المتصفحات/المتصفح المدمج بتطبيقات مثل إنستغرام.
+   استبدلناها بمربعات ثنائية الأبعاد (2D) بسيطة تدور — نفس الشكل الزخرفي، لكن مدعومة في كل المتصفحات بلا استثناء. */
+.shapes{position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden}
+.cube{position:absolute; width:60px; height:60px; border:1.5px solid rgba(var(--blue-rgb),.35);
+  background:rgba(var(--blue-rgb),.06); border-radius:10px; animation:spin2d 18s linear infinite}
 .cube.c1{left:8%; top:22%} .cube.c2{right:10%; top:60%; width:44px;height:44px; animation-duration:24s}
 .cube.c3{left:16%; bottom:14%; width:36px;height:36px; animation-duration:30s}
-@keyframes spin3d{0%{transform:rotateX(0) rotateY(0)}100%{transform:rotateX(360deg) rotateY(360deg)}}
+@keyframes spin2d{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
 /* ================= NAV ================= */
 header.nav{position:sticky; top:0; z-index:60; padding:12px 0}
@@ -138,12 +145,12 @@ header.nav{position:sticky; top:0; z-index:60; padding:12px 0}
 .tilt{position:absolute; inset:0; transform-style:preserve-3d; transition:transform .2s ease-out}
 .campus{position:absolute; left:6%; top:16%; width:270px; height:230px; transform:translateZ(20px)}
 .bld{position:absolute; bottom:0; border-radius:12px 12px 6px 6px;
-  background:linear-gradient(160deg, color-mix(in srgb,var(--blue) 45%,#fff), color-mix(in srgb,var(--accent) 35%,#fff));
+  background:linear-gradient(160deg, rgb(166,168,172), rgb(241,197,183));
   border:1px solid var(--brd); box-shadow:var(--shadow); overflow:hidden}
-html.dark .bld{background:linear-gradient(160deg, color-mix(in srgb,var(--blue) 60%,#1b1b3a), color-mix(in srgb,var(--accent) 50%,#1b1b3a))}
+html.dark .bld{background:linear-gradient(160deg, rgb(45,48,65), rgb(121,59,54))}
 .bld::before{content:""; position:absolute; inset:12px 10px auto 10px; height:64%;
-  background-image:linear-gradient(color-mix(in srgb,#fff 70%,transparent) 2px,transparent 2px),
-    linear-gradient(90deg,color-mix(in srgb,#fff 70%,transparent) 2px,transparent 2px);
+  background-image:linear-gradient(rgba(255,255,255,.7) 2px,transparent 2px),
+    linear-gradient(90deg,rgba(255,255,255,.7) 2px,transparent 2px);
   background-size:20px 20px; opacity:.5; border-radius:4px}
 .bld.m{left:0; width:86px; height:170px}
 .bld.t{left:96px; width:74px; height:210px}
@@ -151,7 +158,7 @@ html.dark .bld{background:linear-gradient(160deg, color-mix(in srgb,var(--blue) 
 .bld .roof{position:absolute; top:-14px; left:50%; transform:translateX(-50%);
   width:0;height:0;border-left:44px solid transparent;border-right:44px solid transparent;border-bottom:16px solid var(--rose)}
 .campus .ground{position:absolute; bottom:-16px; left:-14px; right:-14px; height:22px; border-radius:50%;
-  background:radial-gradient(closest-side, color-mix(in srgb,var(--accent) 30%,transparent), transparent); filter:blur(4px)}
+  background:radial-gradient(closest-side, rgba(var(--accent-rgb),.3), transparent); filter:blur(4px)}
 .floaty{animation:float 6s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
@@ -187,7 +194,7 @@ html.dark .bld{background:linear-gradient(160deg, color-mix(in srgb,var(--blue) 
 .card{padding:24px; transition:transform .2s, box-shadow .2s}
 .card:hover{transform:translateY(-6px); box-shadow:var(--shadow)}
 .card .ico{width:50px;height:50px;border-radius:14px; display:grid; place-items:center; font-size:1.5rem; margin-bottom:14px;
-  background:color-mix(in srgb,var(--accent) 12%,transparent); border:1px solid color-mix(in srgb,var(--accent) 22%,transparent)}
+  background:rgba(var(--accent-rgb),.12); border:1px solid rgba(var(--accent-rgb),.22)}
 .card h3{font-size:1.12rem; margin-bottom:6px}
 .card p{color:var(--ink-soft); font-size:.94rem}
 .pill-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
@@ -200,7 +207,7 @@ html.dark .bld{background:linear-gradient(160deg, color-mix(in srgb,var(--blue) 
   background:linear-gradient(var(--accent),var(--rose))}
 .tl{position:relative; padding:0 0 20px 4px}
 .tl::before{content:""; position:absolute; inset-inline-start:-24px; top:5px; width:14px;height:14px;border-radius:50%;
-  background:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
+  background:var(--accent); box-shadow:0 0 0 4px rgba(var(--accent-rgb),.25)}
 .tl .yr{font-family:var(--fd); font-weight:600; color:var(--accent); font-size:.85rem}
 .tl h4{font-size:1.02rem} .tl p{color:var(--ink-soft); font-size:.9rem}
 
@@ -230,11 +237,11 @@ html.ar .act::after{content:"↖"}
 
 /* office/map */
 .map{position:relative; height:340px; border-radius:20px; overflow:hidden; border:1px solid var(--brd);
-  background:linear-gradient(135deg, color-mix(in srgb,var(--c3) 70%,#fff), color-mix(in srgb,var(--c4) 80%,#fff))}
+  background:linear-gradient(135deg, rgb(226,140,111), rgb(78,83,90))}
 html.dark .map{background:linear-gradient(135deg,#20244a,#181a38)}
 .map .plot{position:absolute; border-radius:10px; background:var(--glass); border:1px solid var(--brd); box-shadow:var(--shadow-soft);
   display:grid; place-items:center; font-size:.78rem; color:var(--ink-soft); font-family:var(--fd)}
-.map .road{position:absolute; background:color-mix(in srgb,var(--ink) 12%,transparent)}
+.map .road{position:absolute; background:rgba(var(--ink-rgb),.12)}
 .marker{position:absolute; width:26px;height:26px;border-radius:50% 50% 50% 0; transform:rotate(-45deg);
   background:linear-gradient(135deg,var(--coral),var(--rose)); box-shadow:0 8px 18px -6px var(--coral);
   display:grid; place-items:center; animation:bob 1.8s ease-in-out infinite}
@@ -265,7 +272,7 @@ html.dark .map{background:linear-gradient(135deg,#20244a,#181a38)}
 .soc:hover{transform:translateY(-3px) rotate(-6deg); background:var(--glass)}
 .info-line{display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--brd-soft)}
 .info-line .ico{width:42px;height:42px;border-radius:12px; display:grid; place-items:center; font-size:1.15rem;
-  background:color-mix(in srgb,var(--accent) 12%,transparent)}
+  background:rgba(var(--accent-rgb),.12)}
 .info-line b{font-family:var(--fd)}
 
 /* calendar edit */
@@ -324,8 +331,8 @@ footer .brand{justify-content:center; margin-bottom:10px}
 /* teams */
 .teams{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
 .team{padding:16px;border-radius:16px}
-.team.red{background:color-mix(in srgb,#ef5b7b 14%,transparent); border:1px solid #ef5b7b}
-.team.blue{background:color-mix(in srgb,#5b8fd6 14%,transparent); border:1px solid #5b8fd6}
+.team.red{background:rgba(239,91,123,.14); border:1px solid #ef5b7b}
+.team.blue{background:rgba(91,143,214,.14); border:1px solid #5b8fd6}
 .team h4{font-family:var(--fd); margin-bottom:8px}
 .team .m{display:flex; align-items:center; gap:8px; padding:5px 0; font-size:.92rem}
 .team .av{width:26px;height:26px;border-radius:50%; display:grid; place-items:center; font-size:.75rem; color:#fff; font-weight:700}
@@ -335,8 +342,8 @@ footer .brand{justify-content:center; margin-bottom:10px}
 .qopt{display:block; width:100%; text-align:start; padding:13px 16px; margin-bottom:9px; border-radius:12px;
   border:1px solid var(--brd); background:var(--glass-2); color:var(--ink); font-family:var(--fb); font-size:.95rem; cursor:pointer; transition:.15s}
 .qopt:hover{background:var(--glass); transform:translateX(3px)}
-.qopt.correct{background:color-mix(in srgb,#3fbf7f 26%,transparent); border-color:#3fbf7f}
-.qopt.wrong{background:color-mix(in srgb,#ef5b7b 26%,transparent); border-color:#ef5b7b}
+.qopt.correct{background:rgba(63,191,127,.26); border-color:#3fbf7f}
+.qopt.wrong{background:rgba(239,91,123,.26); border-color:#ef5b7b}
 .qbar{height:8px; border-radius:50px; background:var(--glass-2); overflow:hidden; margin-bottom:16px}
 .qbar > i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--rose)); transition:width 1s linear}
 
@@ -345,8 +352,8 @@ footer .brand{justify-content:center; margin-bottom:10px}
 .ttl-cards{display:grid;gap:12px;margin-top:14px}
 .ttl-card{padding:16px;border-radius:14px;border:1px solid var(--brd);background:var(--glass-2);cursor:pointer;text-align:center;transition:background .2s,border-color .2s}
 .ttl-card.reveal{animation:cardflip .5s ease}
-.ttl-card.truth{background:color-mix(in srgb,#3fbf7f 20%,transparent);border-color:#3fbf7f;cursor:default}
-.ttl-card.lie{background:color-mix(in srgb,#ef5b7b 22%,transparent);border-color:#ef5b7b;cursor:default}
+.ttl-card.truth{background:rgba(63,191,127,.2);border-color:#3fbf7f;cursor:default}
+.ttl-card.lie{background:rgba(239,91,123,.22);border-color:#ef5b7b;cursor:default}
 @keyframes cardflip{0%{transform:rotateY(0)}50%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
 
 /* 30s ring timer */
@@ -371,7 +378,7 @@ footer .brand{justify-content:center; margin-bottom:10px}
 .rcube.spin{animation:rspin 1.15s cubic-bezier(.2,.7,.2,1)}
 @keyframes rspin{0%{transform:rotateX(-18deg) rotateY(22deg)}100%{transform:rotateX(702deg) rotateY(742deg)}}
 .rface{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;border-radius:12px;border:1px solid var(--brd);
-  background:color-mix(in srgb,var(--accent) 15%,transparent)}
+  background:rgba(var(--accent-rgb),.15)}
 .rface:nth-child(1){transform:translateZ(55px)} .rface:nth-child(2){transform:rotateY(180deg) translateZ(55px)}
 .rface:nth-child(3){transform:rotateY(90deg) translateZ(55px)} .rface:nth-child(4){transform:rotateY(-90deg) translateZ(55px)}
 .rface:nth-child(5){transform:rotateX(90deg) translateZ(55px)} .rface:nth-child(6){transform:rotateX(-90deg) translateZ(55px)}
@@ -420,7 +427,7 @@ footer .brand{justify-content:center; margin-bottom:10px}
 
 /* cursor spotlight on activity cards */
 .act::before{ content:""; position:absolute; inset:0; z-index:0; opacity:0; transition:opacity .35s; pointer-events:none;
-  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%), color-mix(in srgb,var(--coral) 26%,transparent), transparent 62%); }
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%), rgba(var(--accent-rgb),.26), transparent 62%); }
 .act:hover::before{ opacity:1; }
 .act .emoji,.act h3,.act p{ position:relative; z-index:1; }
 
@@ -462,14 +469,14 @@ footer .brand{justify-content:center; margin-bottom:10px}
 .mapmarker .pin::after{content:"";position:absolute;inset:7px;background:#fff;border-radius:50%}
 .mapmarker .pulse{position:absolute;left:50%;bottom:3px;width:10px;height:10px;transform:translateX(-50%);border-radius:50%;
   background:transparent;pointer-events:none;animation:pinpulse 1.9s ease-out infinite}
-@keyframes pinpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--coral) 55%,transparent)}100%{box-shadow:0 0 0 18px transparent}}
+@keyframes pinpulse{0%{box-shadow:0 0 0 0 rgba(var(--accent-rgb),.55)}100%{box-shadow:0 0 0 18px transparent}}
 .mapmarker.drag .pin{filter:drop-shadow(0 10px 8px rgba(0,0,0,.5))}
 .mapmarker.pop{animation:pinpop .35s cubic-bezier(.2,.8,.3,1.5)}
 @keyframes pinpop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
 
 .mapxhair{position:absolute;inset:0;pointer-events:none;z-index:7;opacity:0;transition:opacity .12s}
 .mapxhair.on{opacity:1}
-.mapxhair i{position:absolute;background:color-mix(in srgb,var(--coral) 75%,transparent)}
+.mapxhair i{position:absolute;background:rgba(var(--accent-rgb),.75)}
 .mapxhair .xv{top:0;bottom:0;width:1px}
 .mapxhair .xh{left:0;right:0;height:1px}
 
