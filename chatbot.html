@@ -164,6 +164,15 @@ const STR={
     typeSomething:"اكتب سؤالك من فضلك ✍️",
     restarted:"تم البدء من جديد 🔄",
     langSet:"تم تغيير اللغة إلى العربي ✅",
+    anythingElse:"هل هناك شي ثاني تحتاج تعرفه؟ 🤔",
+    yesLabel:"✅ نعم",
+    noLabel:"🚫 لا، شكراً",
+    yesPrompt:"تمام! اختر موضوع من القائمة، أو اكتب سؤالك مباشرة ⬇️",
+    closing:"شكراً لك 🌸 نتمنى لك يوم جميل ومذاكرة موفقة! 🎓",
+    emailChip:"✉️ أرسل سؤالي لمستر فيصل",
+    emailOpened:"فتحت لك تطبيق الإيميل عشان ترسل سؤالك مباشرة لمستر فيصل ✉️",
+    mailSubject:"سؤال من طالب - مساعد GFP",
+    mailBody:"مرحباً أستاذ فيصل،\n\nعندي سؤال ما قدر البوت يجاوب عليه:\n\"{q}\"\n\nمع الشكر.",
   },
   en:{
     title:"GFP Assistant 🤖", sub:"Ask anything about the General Foundation Program", status:"Online",
@@ -182,8 +191,19 @@ const STR={
     typeSomething:"Please type your question ✍️",
     restarted:"Restarted 🔄",
     langSet:"Language switched to English ✅",
+    anythingElse:"Is there anything else you'd like to know? 🤔",
+    yesLabel:"✅ Yes",
+    noLabel:"🚫 No, thanks",
+    yesPrompt:"Great! Pick a topic from the list, or just type your question ⬇️",
+    closing:"Thank you! 🌸 Wishing you a great day and good luck with your studies! 🎓",
+    emailChip:"✉️ Email my question to Mr. Faisal",
+    emailOpened:"I've opened your email app so you can send your question directly to Mr. Faisal ✉️",
+    mailSubject:"Student question - GFP Assistant",
+    mailBody:"Hello Mr. Faisal,\n\nI have a question the bot couldn't answer:\n\"{q}\"\n\nThank you.",
   }
 };
+
+const FAISAL_EMAIL="faisal.alshamakhi@utas.edu.om";
 
 /* ---------------- Categories ---------------- */
 const CATS=[
@@ -570,14 +590,42 @@ function openCategory(cat){
   });
 }
 
-function askDirect(entry){
-  addMsg(entry.t[LANG],"user");
+function askDirect(entry,skipEcho){
+  if(!skipEcho) addMsg(entry.t[LANG],"user");
   clearChips();
-  botSay(entry.a[LANG],550,()=>showTopicChips(false));
+  botSay(entry.a[LANG],550,()=>askAnythingElse());
 }
 
-function handleFallback(){
-  botSay(STR[LANG].notUnderstood,500,()=>showTopicChips(false));
+function askAnythingElse(){
+  botSay(STR[LANG].anythingElse,500,()=>{
+    addChip(STR[LANG].yesLabel,onYesAnythingElse);
+    addChip(STR[LANG].noLabel,onNoAnythingElse,true);
+  });
+}
+function onYesAnythingElse(){
+  addMsg(STR[LANG].yesLabel,"user");
+  clearChips();
+  botSay(STR[LANG].yesPrompt,450,()=>showTopicChips(true));
+}
+function onNoAnythingElse(){
+  addMsg(STR[LANG].noLabel,"user");
+  clearChips();
+  botSay(STR[LANG].closing,450);
+}
+
+function sendToFaisal(question){
+  const body=STR[LANG].mailBody.replace("{q}",question);
+  const link="mailto:"+FAISAL_EMAIL+"?subject="+encodeURIComponent(STR[LANG].mailSubject)+"&body="+encodeURIComponent(body);
+  window.location.href=link;
+  botSay(STR[LANG].emailOpened,500,()=>askAnythingElse());
+}
+
+function handleFallback(rawQuestion){
+  clearChips();
+  botSay(STR[LANG].notUnderstood,500,()=>{
+    CATS.forEach(c=>addChip(c.emoji+" "+c[LANG],()=>openCategory(c)));
+    addChip(STR[LANG].emailChip,()=>{ addMsg(STR[LANG].emailChip,"user"); clearChips(); sendToFaisal(rawQuestion); },true);
+  });
 }
 
 function handleAmbiguous(matches){
@@ -597,10 +645,10 @@ function processInput(raw){
   if(includesAny(norm,WHOAMI)){ botSay(STR[LANG].whoami,450); return; }
 
   const matches=getMatches(norm);
-  if(matches.length===0){ handleFallback(); return; }
+  if(matches.length===0){ handleFallback(raw); return; }
   const top=matches[0], second=matches[1];
   const confident = !second || (top.score-second.score>=2) || top.score>=5;
-  if(confident){ askDirect(top.e); }
+  if(confident){ askDirect(top.e,true); }
   else{ handleAmbiguous(matches); }
 }
 
