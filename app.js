@@ -97,7 +97,7 @@ const DATA = {
     ],
     contact_h:"Get in touch", contact_p:"Reach me by email or during office hours — details below.",
     contactInfo:[
-      ["📧","Email","yousef.harthi@alnahda.edu.om"],
+      ["📧","Email","faisal.alshamakhi@utas.edu.om"],
       ["🏢","Office","Foundation Building, A-112"],
       ["🕑","Hours","Sun & Wed, 10:00–12:00"],
     ],
@@ -261,7 +261,7 @@ const DATA = {
     ],
     contact_h:"تواصل معي", contact_p:"تواصل معي عبر البريد أو في الساعات المكتبية — التفاصيل بالأسفل.",
     contactInfo:[
-      ["📧","البريد","yousef.harthi@alnahda.edu.om"],
+      ["📧","البريد","faisal.alshamakhi@utas.edu.om"],
       ["🏢","المكتب","مبنى التأسيس، A-112"],
       ["🕑","الساعات","الأحد والأربعاء، ١٠:٠٠–١٢:٠٠"],
     ],
@@ -583,7 +583,7 @@ function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("sh
 
 /* ---------- contact -> real email (mailto), no auto-reply ---------- */
 function submitContact(){
-  const d=D(); const to="yousef.harthi@alnahda.edu.om";
+  const d=D(); const to="faisal.alshamakhi@utas.edu.om";
   const name=$("#cName").value.trim(), email=$("#cEmail").value.trim(), msg=$("#cMsg").value.trim();
   const subject=encodeURIComponent((LANG==="ar"?"رسالة من ":"Message from ")+(name||(LANG==="ar"?"طالب":"a student")));
   const body=encodeURIComponent(
