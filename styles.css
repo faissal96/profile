@@ -87,10 +87,12 @@ html.dark .blob{mix-blend-mode:screen; opacity:.4}
 .blob.b3{width:360px;height:360px;background:var(--blue);left:30%;bottom:-120px;animation:drift 25s ease-in-out infinite}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
 
-/* مجسّمات الخلفية: كانت مكعّبات ثلاثية الأبعاد (3D) تعتمد على color-mix() و transform-style:preserve-3d —
-   هذا التركيب يفشل أو يظهر كمربع رمادي غير منسّق فوق النص في بعض المتصفحات/المتصفح المدمج بتطبيقات مثل إنستغرام.
-   استبدلناها بمربعات ثنائية الأبعاد (2D) بسيطة تدور — نفس الشكل الزخرفي، لكن مدعومة في كل المتصفحات بلا استثناء. */
-.shapes{position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden}
+/* مجسّمات الخلفية (المربعات الدوّارة): كانت ثابتة الموضع على الشاشة (position:fixed) بغضّ النظر عن التمرير،
+   فمع نزول الصفحة تصادف دايمًا إحدى البطاقات شبه الشفافة (glass) وتظهر شبح مربع فوقها — وهذا يصير بأي
+   جهاز/متصفح عاجلاً أم آجلاً، بس موضعها يختلف حسب أبعاد شاشة كل جهاز (لذا تظهر عند طرف وما تظهر عند طرف ثاني).
+   عطّلناها نهائيًا بدل ما نستمر نطارد المشكلة — الخلفية المسطّحة الحالية ما تحتاجها أصلًا. */
+.shapes{display:none}
+.shapes-disabled{position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden}
 .cube{position:absolute; width:60px; height:60px; border:1.5px solid rgba(var(--blue-rgb),.35);
   background:rgba(var(--blue-rgb),.06); border-radius:10px; animation:spin2d 18s linear infinite}
 .cube.c1{left:8%; top:22%} .cube.c2{right:10%; top:60%; width:44px;height:44px; animation-duration:24s}
