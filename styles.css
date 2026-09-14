@@ -47,11 +47,15 @@ html.dark{
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+/* overflow-x:hidden lives on <html>, not <body> — Safari breaks position:sticky (used below by
+   header.nav) for any element whose ancestor chain has overflow set to anything but visible, and
+   body is that nav's direct parent. html sits one level further out, so it still blocks stray
+   horizontal scroll without touching the sticky nav's containing block in Safari. */
+html{scroll-behavior:smooth; overflow-x:hidden}
 body{
   font-family:var(--fb); color:var(--ink);
   background:var(--page); background-attachment:fixed;
-  min-height:100vh; overflow-x:hidden; line-height:1.6;
+  min-height:100vh; line-height:1.6;
   transition:background .5s ease, color .35s ease;
 }
 h1,h2,h3,.d{font-family:var(--fd); line-height:1.15; letter-spacing:-.01em}
@@ -290,7 +294,8 @@ footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:.9rem
 footer .brand{justify-content:center; margin-bottom:10px}
 
 /* ================= MODAL ================= */
-.modal-bg{position:fixed; inset:0; z-index:100; background:rgba(20,16,38,.55); backdrop-filter:blur(6px);
+.modal-bg{position:fixed; inset:0; z-index:100; background:rgba(20,16,38,.55);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
   display:none; align-items:center; justify-content:center; padding:18px}
 .modal-bg.open{display:flex}
 .modal{width:min(560px,96vw); max-height:90vh; overflow:auto; padding:26px; position:relative; animation:popin .3s cubic-bezier(.2,.8,.3,1.3)}

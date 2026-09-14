@@ -25,9 +25,12 @@
     --fb:"Poppins",system-ui,sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{scroll-behavior:smooth}
+  /* overflow-x:hidden on html, not body — .quicknav below is position:sticky and a direct child
+     of body, and Safari breaks sticky positioning for any element whose ancestor has overflow set
+     to anything but visible. Keeping it on html still stops stray horizontal scroll. */
+  html{scroll-behavior:smooth; overflow-x:hidden}
   html,body{margin:0;min-height:100dvh}
-  body{font-family:var(--fb);color:var(--ink);background:var(--paper);overflow-x:hidden}
+  body{font-family:var(--fb);color:var(--ink);background:var(--paper)}
 
   .wrap{max-width:820px;margin:0 auto;padding:22px 18px 60px}
 
