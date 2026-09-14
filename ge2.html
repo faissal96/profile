@@ -44,9 +44,11 @@
   h1 .ar{display:block;font-family:var(--fb);font-weight:600;font-size:.52em;color:var(--muted);margin-top:6px}
   header p{margin:10px auto 0;max-width:560px;color:var(--muted);font-size:14.5px;line-height:1.65}
 
-  .quicknav{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow-x:auto;padding:10px 2px 14px;
-    margin:0 -2px 22px;background:linear-gradient(var(--paper) 70%,rgba(238,238,238,0));-ms-overflow-style:none;scrollbar-width:none}
-  .quicknav::-webkit-scrollbar{display:none}
+  /* Wraps onto as many rows as the screen needs instead of scrolling sideways off-edge —
+     so every link stays visible and reachable on a narrow laptop, a wide TV, or an
+     interactive display, with no hidden-scrollbar affordance to discover. */
+  .quicknav{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px;padding:10px 2px 14px;
+    margin:0 -2px 22px;background:linear-gradient(var(--paper) 70%,rgba(238,238,238,0))}
   .quicknav a{flex:0 0 auto;background:var(--card);border:1px solid var(--line);border-radius:999px;
     padding:7px 14px;font-size:12.5px;font-weight:700;color:var(--dark);text-decoration:none;
     box-shadow:0 4px 12px var(--shadow);white-space:nowrap}
