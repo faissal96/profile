@@ -146,6 +146,8 @@ const DATA = {
       off_dir:"Directions", off_add:"Add row", off_saved:"Office details updated ✔", off_reset:"Reset to default", off_reset_done:"Reset to default ✔",
       soc_title:"Edit social links", soc_note:"Add your real links — students tap to open them. (For the instructor.)",
       soc_name:"Name (e.g. Instagram)", soc_url:"Link (https://…)", soc_saved:"Links updated ✔", soc_reset_done:"Reset to default ✔",
+      con_title:"Edit contact info", con_note:"Saved on this device and shown to students. (For the instructor.)",
+      con_label:"Label (e.g. Email)", con_value:"Value", con_saved:"Contact info updated ✔", con_reset_done:"Reset to default ✔",
       rules_edit_title:"Edit guidelines", rules_edit_note:"Edit the university and classroom rules. (For the instructor.)",
       rules_t:"Title", rules_d:"Detail", rules_saved:"Guidelines updated ✔", rules_reset_done:"Reset to default ✔",
       uni_edit_title:"Edit university info", uni_edit_note:"Edit the intro and info cards. (For the instructor.)",
@@ -310,6 +312,8 @@ const DATA = {
       off_dir:"الإرشادات", off_add:"إضافة سطر", off_saved:"تم تحديث بيانات المكتب ✔", off_reset:"استرجاع الافتراضي", off_reset_done:"تمت الاستعادة ✔",
       soc_title:"تعديل روابط التواصل", soc_note:"أضِف روابطك الحقيقية — الطلاب يضغطونها لفتحها. (للأستاذ.)",
       soc_name:"الاسم (مثل إنستغرام)", soc_url:"الرابط (https://…)", soc_saved:"تم تحديث الروابط ✔", soc_reset_done:"تمت الاستعادة ✔",
+      con_title:"تعديل بيانات التواصل", con_note:"تُحفظ على هذا الجهاز وتظهر للطلاب. (للأستاذ.)",
+      con_label:"العنوان (مثل البريد)", con_value:"القيمة", con_saved:"تم تحديث بيانات التواصل ✔", con_reset_done:"تمت الاستعادة ✔",
       rules_edit_title:"تعديل اللوائح", rules_edit_note:"عدّل لوائح الجامعة والصف. (للأستاذ.)",
       rules_t:"العنوان", rules_d:"التفصيل", rules_saved:"تم تحديث اللوائح ✔", rules_reset_done:"تمت الاستعادة ✔",
       uni_edit_title:"تعديل بيانات الجامعة", uni_edit_note:"عدّل النبذة وبطاقات المعلومات. (للأستاذ.)",
@@ -344,6 +348,9 @@ function persistOff(){ try{ localStorage.setItem("fh_office", JSON.stringify(OFF
 let SOC=null;
 function loadSoc(){ try{ const s=localStorage.getItem("fh_socials"); if(s) SOC=JSON.parse(s); }catch(e){} }
 function persistSoc(){ try{ if(SOC) localStorage.setItem("fh_socials", JSON.stringify(SOC)); else localStorage.removeItem("fh_socials"); }catch(e){} }
+let CON={};
+function loadCon(){ try{ const s=localStorage.getItem("fh_contact"); if(s) CON=JSON.parse(s); }catch(e){} }
+function persistCon(){ try{ localStorage.setItem("fh_contact", JSON.stringify(CON)); }catch(e){} }
 let RUL={};
 function loadRul(){ try{ const s=localStorage.getItem("fh_rules"); if(s) RUL=JSON.parse(s); }catch(e){} }
 function persistRul(){ try{ localStorage.setItem("fh_rules", JSON.stringify(RUL)); }catch(e){} }
@@ -353,7 +360,7 @@ function persistUni(){ try{ localStorage.setItem("fh_uni", JSON.stringify(UNI));
 let EX={};
 function loadEx(){ try{ const s=localStorage.getItem("fh_extra"); if(s) EX=JSON.parse(s); }catch(e){} }
 function persistEx(){ try{ localStorage.setItem("fh_extra", JSON.stringify(EX)); }catch(e){} }
-const D = ()=> ({ ...DATA[LANG], ...(INST[LANG]||{}), ...(OFF[LANG]||{}), ...(RUL[LANG]||{}), ...(UNI[LANG]||{}), ...(EX[LANG]||{}), ...(SOC?{socials:SOC}:{}) });
+const D = ()=> ({ ...DATA[LANG], ...(INST[LANG]||{}), ...(OFF[LANG]||{}), ...(RUL[LANG]||{}), ...(UNI[LANG]||{}), ...(EX[LANG]||{}), ...(CON[LANG]||{}), ...(SOC?{socials:SOC}:{}) });
 let MAP=null;
 function loadMap(){ try{ const s=localStorage.getItem("fh_map"); if(s) MAP=JSON.parse(s); }catch(e){} }
 function persistMap(){ try{ if(MAP) localStorage.setItem("fh_map",JSON.stringify(MAP)); else localStorage.removeItem("fh_map"); }catch(e){} }
@@ -389,7 +396,7 @@ const SUPABASE_ANON_KEY="sb_publishable_Ly9alyc24InsrFv595busQ_ZuKdKbDI";
 const sb=(window.supabase && /^https:\/\//.test(SUPABASE_URL) && SUPABASE_ANON_KEY!=="YOUR_SUPABASE_ANON_KEY")
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
 
-const EDIT_IDS=["instEditBtn","offEditBtn","socEditBtn","rulesEditBtn","uniEditBtn","mapEditBtn","annEditBtn","matEditBtn","faqEditBtn","calEditBtn"];
+const EDIT_IDS=["instEditBtn","offEditBtn","socEditBtn","conEditBtn","rulesEditBtn","uniEditBtn","mapEditBtn","annEditBtn","matEditBtn","faqEditBtn","calEditBtn"];
 let OWNER=false;
 async function loadOwner(){
   if(!sb) return;
@@ -543,6 +550,7 @@ $("#calEditBtn").onclick = toggleCalEdit;
 $("#instEditBtn").onclick = openInstEditor;
 $("#offEditBtn").onclick = openOfficeEditor;
 $("#socEditBtn").onclick = openSocialEditor;
+$("#conEditBtn").onclick = openContactEditor;
 $("#rulesEditBtn").onclick = openRulesEditor;
 $("#uniEditBtn").onclick = openUniEditor;
 $("#mapEditBtn").onclick = openMapEditor;
@@ -1204,6 +1212,29 @@ function saveSoc(){
 }
 function resetSoc(){ SOC=null; persistSoc(); render(); closeModal(); toast(D().m.soc_reset_done); }
 
+/* Contact info editor (site owner) */
+function openContactEditor(){
+  const d=D(), m=d.m;
+  const rows=(d.contactInfo||[]).map(([ic,l,v])=>
+    `<div class="cal-row"><input value="${esc(ic)}" style="width:46px;text-align:center;padding:9px 4px"><input class="date" value="${esc(l)}" placeholder="${m.con_label}"><input value="${esc(v)}" placeholder="${m.con_value}"><button class="icon-btn" onclick="this.parentElement.remove()">✕</button></div>`).join("");
+  openModal(`
+    <h3>✉️ ${m.con_title}</h3><p class="sub">${m.con_note}</p>
+    <div id="conRows">${rows}</div>
+    <button class="btn ghost mini" style="margin:6px 0 14px" onclick="conAdd()">＋ ${m.off_add}</button>
+    <div class="field-inline">
+      <button class="btn mini coral" onclick="saveCon()">✔ ${m.cal_save}</button>
+      <button class="btn ghost mini" onclick="resetCon()">${m.off_reset}</button>
+    </div>`);
+}
+function conAdd(){ const div=document.createElement("div"); div.className="cal-row";
+  div.innerHTML='<input value="📌" style="width:46px;text-align:center;padding:9px 4px"><input class="date" value="" placeholder="'+D().m.con_label+'"><input value="" placeholder="'+D().m.con_value+'"><button class="icon-btn" onclick="this.parentElement.remove()">✕</button>';
+  $("#conRows").appendChild(div); }
+function saveCon(){
+  const rows=[...$("#conRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return [(i[0].value.trim()||"📌"),i[1].value.trim(),i[2].value.trim()];}).filter(x=>x[1]||x[2]);
+  CON[LANG]={contactInfo:rows}; persistCon(); render(); closeModal(); toast(D().m.con_saved);
+}
+function resetCon(){ delete CON[LANG]; persistCon(); render(); closeModal(); toast(D().m.con_reset_done); }
+
 /* Guidelines editor (university + classroom rules) */
 function openRulesEditor(){
   const d=D(), m=d.m;
@@ -1469,6 +1500,7 @@ loadCal();
 loadInst();
 loadOff();
 loadSoc();
+loadCon();
 loadRul();
 loadUni();
 loadMap();
