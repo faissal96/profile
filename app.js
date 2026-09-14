@@ -165,6 +165,8 @@ const DATA = {
       mat_edit_title:"Edit lecture materials", mat_saved:"Materials updated ✔",
       faq_edit_title:"Edit FAQ", faq_q:"Question", faq_a:"Answer", faq_saved:"FAQ updated ✔",
       gen_reset_done:"Reset to default ✔",
+      save_failed:"⚠️ Couldn't save — this device's browser storage is full. Try removing a photo, or use a smaller one.",
+      photo_save_failed:"⚠️ This photo is too large to save on this device. Try a smaller photo, or paste a photo link instead.",
       owner_title:"Owner access", owner_note:"Enter the owner email — we'll send a sign-in link to unlock editing. Everyone else sees a read-only site.",
       owner_email_ph:"Owner email", owner_send:"Send link 📩",
       owner_check_email:"Check your inbox and tap \"Sign in\". You'll land back here with editing unlocked.",
@@ -335,6 +337,8 @@ const DATA = {
       mat_edit_title:"تعديل مواد المحاضرات", mat_saved:"تم تحديث المواد ✔",
       faq_edit_title:"تعديل الأسئلة الشائعة", faq_q:"السؤال", faq_a:"الإجابة", faq_saved:"تم تحديث الأسئلة ✔",
       gen_reset_done:"تمت الاستعادة ✔",
+      save_failed:"⚠️ تعذّر الحفظ — مساحة التخزين في متصفح هذا الجهاز ممتلئة. جرّبي تحذفين صورة، أو استخدمي صورة أصغر.",
+      photo_save_failed:"⚠️ هذي الصورة أكبر من مساحة التخزين المتوفرة بهذا الجهاز. جرّبي صورة أصغر، أو الصقي رابط صورة بدالها.",
       owner_title:"دخول المالك", owner_note:"أدخل إيميل المالك — بنرسل لك رابط دخول آمن لتفعيل التعديل. يرى بقية الزوّار الموقع للقراءة فقط.",
       owner_email_ph:"إيميل المالك", owner_send:"إرسال الرابط 📩",
       owner_check_email:"تفقّدي بريدك الإلكتروني ودوسي على \"Sign in\". بترجعين للموقع ووضع التعديل مفعّل تلقائياً.",
@@ -347,31 +351,45 @@ const DATA = {
 let LANG = "en";
 const $ = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+
+/* Storage helpers: localStorage has a per-device quota (often only a few MB,
+   sometimes less in Safari/private mode). Photos are the #1 way to hit it.
+   These wrappers report failure honestly instead of swallowing it, so a
+   "saved" toast never lies about what actually made it to disk. */
+function lsSet(key,value){
+  try{ localStorage.setItem(key,value); return true; }
+  catch(err){ console.warn("[storage] save failed for",key,err); return false; }
+}
+function lsRemove(key){
+  try{ localStorage.removeItem(key); return true; }
+  catch(err){ console.warn("[storage] remove failed for",key,err); return false; }
+}
+
 let INST={};
 function loadInst(){ try{ const s=localStorage.getItem("fh_inst"); if(s) INST=JSON.parse(s); }catch(e){} }
-function persistInst(){ try{ localStorage.setItem("fh_inst", JSON.stringify(INST)); }catch(e){} }
+function persistInst(){ return lsSet("fh_inst", JSON.stringify(INST)); }
 let OFF={};
 function loadOff(){ try{ const s=localStorage.getItem("fh_office"); if(s) OFF=JSON.parse(s); }catch(e){} }
-function persistOff(){ try{ localStorage.setItem("fh_office", JSON.stringify(OFF)); }catch(e){} }
+function persistOff(){ return lsSet("fh_office", JSON.stringify(OFF)); }
 let SOC=null;
 function loadSoc(){ try{ const s=localStorage.getItem("fh_socials"); if(s) SOC=JSON.parse(s); }catch(e){} }
-function persistSoc(){ try{ if(SOC) localStorage.setItem("fh_socials", JSON.stringify(SOC)); else localStorage.removeItem("fh_socials"); }catch(e){} }
+function persistSoc(){ return SOC ? lsSet("fh_socials", JSON.stringify(SOC)) : lsRemove("fh_socials"); }
 let CON={};
 function loadCon(){ try{ const s=localStorage.getItem("fh_contact"); if(s) CON=JSON.parse(s); }catch(e){} }
-function persistCon(){ try{ localStorage.setItem("fh_contact", JSON.stringify(CON)); }catch(e){} }
+function persistCon(){ return lsSet("fh_contact", JSON.stringify(CON)); }
 let RUL={};
 function loadRul(){ try{ const s=localStorage.getItem("fh_rules"); if(s) RUL=JSON.parse(s); }catch(e){} }
-function persistRul(){ try{ localStorage.setItem("fh_rules", JSON.stringify(RUL)); }catch(e){} }
+function persistRul(){ return lsSet("fh_rules", JSON.stringify(RUL)); }
 let UNI={};
 function loadUni(){ try{ const s=localStorage.getItem("fh_uni"); if(s) UNI=JSON.parse(s); }catch(e){} }
-function persistUni(){ try{ localStorage.setItem("fh_uni", JSON.stringify(UNI)); }catch(e){} }
+function persistUni(){ return lsSet("fh_uni", JSON.stringify(UNI)); }
 let EX={};
 function loadEx(){ try{ const s=localStorage.getItem("fh_extra"); if(s) EX=JSON.parse(s); }catch(e){} }
-function persistEx(){ try{ localStorage.setItem("fh_extra", JSON.stringify(EX)); }catch(e){} }
+function persistEx(){ return lsSet("fh_extra", JSON.stringify(EX)); }
 const D = ()=> ({ ...DATA[LANG], ...(INST[LANG]||{}), ...(OFF[LANG]||{}), ...(RUL[LANG]||{}), ...(UNI[LANG]||{}), ...(EX[LANG]||{}), ...(CON[LANG]||{}), ...(SOC?{socials:SOC}:{}) });
 let MAP=null;
 function loadMap(){ try{ const s=localStorage.getItem("fh_map"); if(s) MAP=JSON.parse(s); }catch(e){} }
-function persistMap(){ try{ if(MAP) localStorage.setItem("fh_map",JSON.stringify(MAP)); else localStorage.removeItem("fh_map"); }catch(e){} }
+function persistMap(){ return MAP ? lsSet("fh_map",JSON.stringify(MAP)) : lsRemove("fh_map"); }
 const DEFAULT_MAP={img:"",mx:52,my:58};
 function mapData(){ return MAP||DEFAULT_MAP; }
 function renderMap(){
@@ -451,7 +469,7 @@ async function ownerSendCode(){
    ============================================================ */
 let calEdit=false, calSaved=null, calBuf=null;
 function loadCal(){ try{ const s=localStorage.getItem("fh_cal"); if(s) calSaved=JSON.parse(s); }catch(e){} }
-function saveCal(){ try{ localStorage.setItem("fh_cal", JSON.stringify(calSaved)); }catch(e){} }
+function saveCal(){ return lsSet("fh_cal", JSON.stringify(calSaved)); }
 function calRows(){ return (calSaved || D().calendar).map(r=>r.slice()); }
 
 function renderCalendar(){
@@ -484,7 +502,7 @@ function renderCalendar(){
 function toggleCalEdit(){ if(calEdit){ calCancel(); return; } calBuf=calRows(); calEdit=true; renderCalendar(); }
 function calAdd(){ calBuf.push([D().m.cal_label_ph, D().m.cal_date_ph]); renderCalendar(); }
 function calDel(i){ calBuf.splice(i,1); renderCalendar(); }
-function calSaveEdit(){ calSaved=calBuf.filter(r=>(r[0]+r[1]).trim()); saveCal(); calEdit=false; renderCalendar(); toast(D().m.cal_saved); }
+function calSaveEdit(){ calSaved=calBuf.filter(r=>(r[0]+r[1]).trim()); const ok=saveCal(); calEdit=false; renderCalendar(); toast(ok?D().m.cal_saved:D().m.save_failed); }
 function calCancel(){ calEdit=false; renderCalendar(); }
 
 /* ============================================================
@@ -960,11 +978,30 @@ function saveInst(){
   o.research=$("#eFocus").value.split("\n").map(s=>s.trim()).filter(Boolean);
   o.courses=$("#eMods").value.split("\n").map(s=>s.trim()).filter(Boolean);
   o.timeline=$("#eTl").value.split("\n").map(s=>s.trim()).filter(Boolean).map(line=>{const p=line.split("|").map(x=>x.trim());return {yr:p[0]||"",h:p[1]||"",p:p[2]||""};});
-  INST[LANG]=o; persistInst(); render(); closeModal(); toast(D().m.e_saved);
+  INST[LANG]=o; const ok=persistInst(); render();
+  if(ok){ closeModal(); toast(D().m.e_saved); }
+  else { toast(o.inst_photo && /^data:/.test(o.inst_photo) ? D().m.photo_save_failed : D().m.save_failed); }
 }
-function resetInst(){ delete INST[LANG]; persistInst(); render(); closeModal(); toast(D().m.e_reset_done); }
+function resetInst(){ delete INST[LANG]; const ok=persistInst(); render(); closeModal(); toast(ok?D().m.e_reset_done:D().m.save_failed); }
 
 /* photo upload / preview */
+/* Encode a canvas as JPEG, shrinking width/quality step by step until the
+   result fits a byte budget (or we hit the floor). Photos are what fill up
+   localStorage's small per-device quota, so this keeps them from ever being
+   saved bigger than they need to be. draw(w,q) must build a canvas at
+   roughly `w` px wide and return canvas.toDataURL("image/jpeg",q) (or ""
+   on failure). */
+function _encodeWithBudget(draw,startW,minW,startQ,minQ,budgetBytes){
+  let w=startW,q=startQ,data="";
+  for(let i=0;i<6;i++){
+    data=draw(w,q);
+    if(!data) break;
+    if(data.length*0.75<=budgetBytes || (w<=minW && q<=minQ)) break;
+    const nq=+(q-0.12).toFixed(2);
+    if(nq<minQ){ w=Math.max(minW,Math.round(w*0.8)); } else { q=nq; }
+  }
+  return data;
+}
 function _photoPreview(v){ const p=$("#ePhotoPrev"); if(!p) return; p.innerHTML = v ? `<img src="${esc(v)}" alt="" style="width:100%;height:100%;object-fit:cover">` : PERSON_SVG; }
 function setPhotoUrl(v){ v=(v||"").trim(); $("#ePhoto").value=v; _photoPreview(v); }
 function clearPhoto(){ $("#ePhoto").value=""; if($("#ePhotoUrl")) $("#ePhotoUrl").value=""; _photoPreview(""); }
@@ -972,10 +1009,13 @@ function pickPhoto(e){
   const f=e.target.files && e.target.files[0]; if(!f) return;
   const r=new FileReader();
   r.onload=()=>{ const img=new Image();
-    img.onload=()=>{ const S=256, c=document.createElement("canvas"); c.width=c.height=S; const ctx=c.getContext("2d");
-      const scale=Math.max(S/img.width,S/img.height), w=img.width*scale, h=img.height*scale;
-      ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
-      let data; try{ data=c.toDataURL("image/jpeg",0.82); }catch(err){ data=r.result; }
+    img.onload=()=>{
+      const draw=(S,q)=>{ const c=document.createElement("canvas"); c.width=c.height=S; const ctx=c.getContext("2d");
+        const scale=Math.max(S/img.width,S/img.height), w=img.width*scale, h=img.height*scale;
+        ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+        try{ return c.toDataURL("image/jpeg",q); }catch(err){ return ""; } };
+      let data=_encodeWithBudget(draw,256,160,0.82,0.5,110*1024);
+      if(!data) data=r.result;
       $("#ePhoto").value=data; if($("#ePhotoUrl")) $("#ePhotoUrl").value=""; _photoPreview(data);
     };
     img.onerror=()=>toast(LANG==="ar"?"تعذّر قراءة الصورة":"Couldn't read that image");
@@ -1193,9 +1233,9 @@ function offAdd(){ const div=document.createElement("div"); div.className="cal-r
   $("#offRows").appendChild(div); }
 function saveOffice(){
   const rows=[...$("#offRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return [r.dataset.ic||"📍",i[0].value.trim(),i[1].value.trim()];}).filter(x=>x[1]||x[2]);
-  OFF[LANG]={officeInfo:rows, office_dir:$("#offDir").value.trim()}; persistOff(); render(); closeModal(); toast(D().m.off_saved);
+  OFF[LANG]={officeInfo:rows, office_dir:$("#offDir").value.trim()}; const ok=persistOff(); render(); closeModal(); toast(ok?D().m.off_saved:D().m.save_failed);
 }
-function resetOffice(){ delete OFF[LANG]; persistOff(); render(); closeModal(); toast(D().m.off_reset_done); }
+function resetOffice(){ delete OFF[LANG]; const ok=persistOff(); render(); closeModal(); toast(ok?D().m.off_reset_done:D().m.save_failed); }
 
 /* Social links editor (site owner) */
 function openSocialEditor(){
@@ -1216,9 +1256,9 @@ function socAdd(){ const div=document.createElement("div"); div.className="cal-r
   $("#socRows").appendChild(div); }
 function saveSoc(){
   SOC=[...$("#socRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {i:(i[0].value.trim()||"🔗"),l:i[1].value.trim(),u:i[2].value.trim()};}).filter(x=>x.l||x.u);
-  persistSoc(); render(); closeModal(); toast(D().m.soc_saved);
+  const ok=persistSoc(); render(); closeModal(); toast(ok?D().m.soc_saved:D().m.save_failed);
 }
-function resetSoc(){ SOC=null; persistSoc(); render(); closeModal(); toast(D().m.soc_reset_done); }
+function resetSoc(){ SOC=null; const ok=persistSoc(); render(); closeModal(); toast(ok?D().m.soc_reset_done:D().m.save_failed); }
 
 /* Contact info editor (site owner) */
 function openContactEditor(){
@@ -1239,9 +1279,9 @@ function conAdd(){ const div=document.createElement("div"); div.className="cal-r
   $("#conRows").appendChild(div); }
 function saveCon(){
   const rows=[...$("#conRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return [(i[0].value.trim()||"📌"),i[1].value.trim(),i[2].value.trim()];}).filter(x=>x[1]||x[2]);
-  CON[LANG]={contactInfo:rows}; persistCon(); render(); closeModal(); toast(D().m.con_saved);
+  CON[LANG]={contactInfo:rows}; const ok=persistCon(); render(); closeModal(); toast(ok?D().m.con_saved:D().m.save_failed);
 }
-function resetCon(){ delete CON[LANG]; persistCon(); render(); closeModal(); toast(D().m.con_reset_done); }
+function resetCon(){ delete CON[LANG]; const ok=persistCon(); render(); closeModal(); toast(ok?D().m.con_reset_done:D().m.save_failed); }
 
 /* Guidelines editor (university + classroom rules) */
 function openRulesEditor(){
@@ -1265,8 +1305,8 @@ function ruAdd(id){ const div=document.createElement("div"); div.className="cal-
   div.innerHTML='<input value="•" style="width:44px;text-align:center;padding:9px 4px"><input class="date" value="" placeholder="'+D().m.rules_t+'"><input value="" placeholder="'+D().m.rules_d+'"><button class="icon-btn" onclick="this.parentElement.remove()">✕</button>';
   $("#"+id).appendChild(div); }
 function _ruCollect(id){ return [...$("#"+id).querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {i:(i[0].value.trim()||"•"),t:i[1].value.trim(),d:i[2].value.trim()};}).filter(x=>x.t||x.d); }
-function saveRules(){ RUL[LANG]={uniRules:_ruCollect("ruUni"), classRules:_ruCollect("ruClass")}; persistRul(); render(); closeModal(); toast(D().m.rules_saved); }
-function resetRules(){ delete RUL[LANG]; persistRul(); render(); closeModal(); toast(D().m.rules_reset_done); }
+function saveRules(){ RUL[LANG]={uniRules:_ruCollect("ruUni"), classRules:_ruCollect("ruClass")}; const ok=persistRul(); render(); closeModal(); toast(ok?D().m.rules_saved:D().m.save_failed); }
+function resetRules(){ delete RUL[LANG]; const ok=persistRul(); render(); closeModal(); toast(ok?D().m.rules_reset_done:D().m.save_failed); }
 
 /* University info editor */
 function openUniEditor(){
@@ -1288,9 +1328,9 @@ function uniAdd(){ const div=document.createElement("div"); div.className="cal-r
   $("#uniRows").appendChild(div); }
 function saveUni(){
   const info=[...$("#uniRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {i:(i[0].value.trim()||"🏛️"),t:i[1].value.trim(),d:i[2].value.trim()};}).filter(x=>x.t||x.d);
-  UNI[LANG]={uni_p:$("#uniIntro").value.trim(), uniInfo:info}; persistUni(); render(); closeModal(); toast(D().m.uni_saved);
+  UNI[LANG]={uni_p:$("#uniIntro").value.trim(), uniInfo:info}; const ok=persistUni(); render(); closeModal(); toast(ok?D().m.uni_saved:D().m.save_failed);
 }
-function resetUni(){ delete UNI[LANG]; persistUni(); render(); closeModal(); toast(D().m.uni_reset_done); }
+function resetUni(){ delete UNI[LANG]; const ok=persistUni(); render(); closeModal(); toast(ok?D().m.uni_reset_done:D().m.save_failed); }
 
 /* Campus map editor (upload image + place marker) */
 let _ME=null, _mapSetImg=null;
@@ -1418,18 +1458,27 @@ function mapEditor(){
 
 function mapPick(e){ const f=e.target.files&&e.target.files[0]; if(!f) return; const r=new FileReader();
   r.onload=()=>{ const im=new Image();
-    im.onload=()=>{ const MAXW=1600, sc=Math.min(1,MAXW/im.width), w=Math.round(im.width*sc), h=Math.round(im.height*sc);
-      const c=document.createElement("canvas"); c.width=w; c.height=h; const cx=c.getContext("2d");
-      cx.imageSmoothingQuality="high"; cx.drawImage(im,0,0,w,h);
-      let data; try{ data=c.toDataURL("image/jpeg",0.88); }catch(err){ data=r.result; }
+    im.onload=()=>{
+      const draw=(W,q)=>{ const sc=Math.min(1,W/im.width), w=Math.round(im.width*sc), h=Math.round(im.height*sc);
+        const c=document.createElement("canvas"); c.width=w; c.height=h; const cx=c.getContext("2d");
+        cx.imageSmoothingQuality="high"; cx.drawImage(im,0,0,w,h);
+        try{ return c.toDataURL("image/jpeg",q); }catch(err){ return ""; } };
+      /* map photos can come from a phone camera at 12MP+, so this is the one
+         most likely to blow past localStorage's quota — keep it well under
+         budget rather than relying on a single fixed size/quality. */
+      let data=_encodeWithBudget(draw,1100,640,0.8,0.45,420*1024);
+      if(!data) data=r.result;
       if(_mapSetImg) _mapSetImg(data); };
     im.onerror=()=>toast(LANG==="ar"?"تعذّر قراءة الصورة":"Couldn't read that image"); im.src=r.result; };
   r.readAsDataURL(f); }
-function saveMap(){ if(!_ME) return; MAP={img:_ME.img,mx:_ME.mx,my:_ME.my}; persistMap(); renderMap(); closeModal(); toast(D().m.map_saved); }
-function resetMap(){ MAP=null; persistMap(); renderMap(); closeModal(); toast(D().m.map_reset_done); }
+function saveMap(){ if(!_ME) return; MAP={img:_ME.img,mx:_ME.mx,my:_ME.my}; const ok=persistMap(); renderMap();
+  if(ok){ closeModal(); toast(D().m.map_saved); }
+  else { toast(D().m.photo_save_failed); }
+}
+function resetMap(){ MAP=null; const ok=persistMap(); renderMap(); closeModal(); toast(ok?D().m.map_reset_done:D().m.save_failed); }
 
 /* Announcements / Materials / FAQ editors */
-function _exReset(key){ if(EX[LANG]){ delete EX[LANG][key]; if(!Object.keys(EX[LANG]).length) delete EX[LANG]; } persistEx(); render(); closeModal(); toast(D().m.gen_reset_done); }
+function _exReset(key){ if(EX[LANG]){ delete EX[LANG][key]; if(!Object.keys(EX[LANG]).length) delete EX[LANG]; } const ok=persistEx(); render(); closeModal(); toast(ok?D().m.gen_reset_done:D().m.save_failed); }
 
 function openAnnEditor(){
   const d=D(), m=d.m;
@@ -1443,7 +1492,7 @@ function openAnnEditor(){
 function annAdd(){ const div=document.createElement("div"); div.className="cal-row";
   div.innerHTML='<input class="date" value="" placeholder="'+D().m.ann_tag+'"><input value="" placeholder="'+D().m.rules_t+'"><input value="" placeholder="'+D().m.rules_d+'"><button class="icon-btn" onclick="this.parentElement.remove()">✕</button>';
   $("#annRows").appendChild(div); }
-function saveAnn(){ const arr=[...$("#annRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {tag:i[0].value.trim()||"•",t:i[1].value.trim(),d:i[2].value.trim()};}).filter(x=>x.t||x.d); EX[LANG]={...(EX[LANG]||{}),announcements:arr}; persistEx(); render(); closeModal(); toast(D().m.ann_saved); }
+function saveAnn(){ const arr=[...$("#annRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {tag:i[0].value.trim()||"•",t:i[1].value.trim(),d:i[2].value.trim()};}).filter(x=>x.t||x.d); EX[LANG]={...(EX[LANG]||{}),announcements:arr}; const ok=persistEx(); render(); closeModal(); toast(ok?D().m.ann_saved:D().m.save_failed); }
 
 function openMatEditor(){
   const d=D(), m=d.m;
@@ -1457,7 +1506,7 @@ function openMatEditor(){
 function matAdd(){ const div=document.createElement("div"); div.className="cal-row";
   div.innerHTML='<input value="📄" style="width:44px;text-align:center;padding:9px 4px"><input class="date" value="" placeholder="'+D().m.rules_t+'"><input value="" placeholder="'+D().m.rules_d+'"><button class="icon-btn" onclick="this.parentElement.remove()">✕</button>';
   $("#matRows").appendChild(div); }
-function saveMat(){ const arr=[...$("#matRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {i:(i[0].value.trim()||"📄"),t:i[1].value.trim(),d:i[2].value.trim()};}).filter(x=>x.t||x.d); EX[LANG]={...(EX[LANG]||{}),materials:arr}; persistEx(); render(); closeModal(); toast(D().m.mat_saved); }
+function saveMat(){ const arr=[...$("#matRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {i:(i[0].value.trim()||"📄"),t:i[1].value.trim(),d:i[2].value.trim()};}).filter(x=>x.t||x.d); EX[LANG]={...(EX[LANG]||{}),materials:arr}; const ok=persistEx(); render(); closeModal(); toast(ok?D().m.mat_saved:D().m.save_failed); }
 
 function openFaqEditor(){
   const d=D(), m=d.m;
@@ -1471,7 +1520,7 @@ function openFaqEditor(){
 function faqAdd(){ const div=document.createElement("div"); div.className="cal-row"; div.style.flexWrap="wrap";
   div.innerHTML='<input value="" style="flex:1 1 100%" placeholder="'+D().m.faq_q+'"><input value="" style="flex:1 1 100%" placeholder="'+D().m.faq_a+'"><button class="icon-btn" onclick="this.parentElement.remove()">✕</button>';
   $("#faqRows").appendChild(div); }
-function saveFaq(){ const arr=[...$("#faqRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {q:i[0].value.trim(),a:i[1].value.trim()};}).filter(x=>x.q||x.a); EX[LANG]={...(EX[LANG]||{}),faq:arr}; persistEx(); render(); closeModal(); toast(D().m.faq_saved); }
+function saveFaq(){ const arr=[...$("#faqRows").querySelectorAll(".cal-row")].map(r=>{const i=r.querySelectorAll("input");return {q:i[0].value.trim(),a:i[1].value.trim()};}).filter(x=>x.q||x.a); EX[LANG]={...(EX[LANG]||{}),faq:arr}; const ok=persistEx(); render(); closeModal(); toast(ok?D().m.faq_saved:D().m.save_failed); }
 
 /* ============================================================
    HERO tilt + particles
