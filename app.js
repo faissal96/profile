@@ -508,9 +508,16 @@ function calCancel(){ calEdit=false; renderCalendar(); }
 /* ============================================================
    RENDER
    ============================================================ */
+/* data-t keys whose value can come from an owner-edited plain-text field
+   (inst_name/inst_role/inst_p/office_dir/uni_p) rather than the static,
+   developer-authored DATA object — these are HTML-escaped before being
+   written in, since they're free text, not markup. Every other data-t key
+   (e.g. hero_title, which intentionally contains a <span> for styling)
+   is left as-is. */
+const RAW_TEXT_KEYS = new Set(["inst_name","inst_role","inst_p","office_dir","uni_p"]);
 function render(){
   const d = D();
-  $$("[data-t]").forEach(el=>{ const v=d[el.dataset.t]; if(v!=null) el.innerHTML=v; });
+  $$("[data-t]").forEach(el=>{ const k=el.dataset.t; const v=d[k]; if(v!=null) el.innerHTML = RAW_TEXT_KEYS.has(k) ? esc(v) : v; });
   $$(".avatar").forEach(a=>{
     a.innerHTML = d.inst_photo
       ? `<img src="${esc(d.inst_photo)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
@@ -518,40 +525,40 @@ function render(){
   });
 
   $("#stats").innerHTML = d.stats.map(([n,l])=>
-    `<div class="glass stat"><div class="num" data-count="${n}">${n}</div><div class="lbl">${l}</div></div>`).join("");
-  $("#research").innerHTML = d.research.map(r=>`<span class="pill">${r}</span>`).join("");
-  $("#courses").innerHTML = d.courses.map(c=>`<span class="pill">${c}</span>`).join("");
+    `<div class="glass stat"><div class="num" data-count="${esc(n)}">${esc(n)}</div><div class="lbl">${esc(l)}</div></div>`).join("");
+  $("#research").innerHTML = d.research.map(r=>`<span class="pill">${esc(r)}</span>`).join("");
+  $("#courses").innerHTML = d.courses.map(c=>`<span class="pill">${esc(c)}</span>`).join("");
   $("#timeline").innerHTML = d.timeline.map(t=>
-    `<div class="tl"><div class="yr">${t.yr}</div><h4>${t.h}</h4><p>${t.p}</p></div>`).join("");
+    `<div class="tl"><div class="yr">${esc(t.yr)}</div><h4>${esc(t.h)}</h4><p>${esc(t.p)}</p></div>`).join("");
 
   $("#acts").innerHTML = d.activities.map(a=>
     `<div class="glass act reveal in" onclick="openActivity('${a.id}')"><span class="emoji">${a.e}</span><h3>${a.t}</h3><p>${a.d}</p></div>`).join("");
 
-  const rc = arr => arr.map(r=>`<div class="glass card"><div class="ico">${r.i}</div><h3>${r.t}</h3><p>${r.d}</p></div>`).join("");
+  const rc = arr => arr.map(r=>`<div class="glass card"><div class="ico">${esc(r.i)}</div><h3>${esc(r.t)}</h3><p>${esc(r.d)}</p></div>`).join("");
   $("#uniRules").innerHTML = rc(d.uniRules);
   $("#classRules").innerHTML = rc(d.classRules);
 
   $("#officeInfo").innerHTML = d.officeInfo.map(([i,l,v])=>
-    `<div class="info-line"><span class="ico">${i}</span><div><div style="color:var(--ink-soft);font-size:.8rem">${l}</div><b>${v}</b></div></div>`).join("");
+    `<div class="info-line"><span class="ico">${esc(i)}</span><div><div style="color:var(--ink-soft);font-size:.8rem">${esc(l)}</div><b>${esc(v)}</b></div></div>`).join("");
   renderMap();
 
-  $("#uniInfo").innerHTML = d.uniInfo.map(u=>`<div class="glass card"><div class="ico">${u.i}</div><h3>${u.t}</h3><p>${u.d}</p></div>`).join("");
+  $("#uniInfo").innerHTML = d.uniInfo.map(u=>`<div class="glass card"><div class="ico">${esc(u.i)}</div><h3>${esc(u.t)}</h3><p>${esc(u.d)}</p></div>`).join("");
   renderCalendar();
 
   $("#announcements").innerHTML = d.announcements.map(a=>
-    `<div class="glass card" style="padding:16px"><span class="pill" style="color:var(--accent)">${a.tag}</span><h3 style="margin-top:8px">${a.t}</h3><p>${a.d}</p></div>`).join("");
+    `<div class="glass card" style="padding:16px"><span class="pill" style="color:var(--accent)">${esc(a.tag)}</span><h3 style="margin-top:8px">${esc(a.t)}</h3><p>${esc(a.d)}</p></div>`).join("");
   $("#materials").innerHTML = d.materials.map(mt=>
-    `<div class="glass card" style="padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer" onclick="toast('${LANG==='ar'?'التنزيل تجريبي':'Demo download'} ⬇️')"><div class="ico" style="margin:0">${mt.i}</div><div><b class="d">${mt.t}</b><div style="font-size:.82rem;color:var(--ink-soft)">${mt.d}</div></div></div>`).join("");
+    `<div class="glass card" style="padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer" onclick="toast('${LANG==='ar'?'التنزيل تجريبي':'Demo download'} ⬇️')"><div class="ico" style="margin:0">${esc(mt.i)}</div><div><b class="d">${esc(mt.t)}</b><div style="font-size:.82rem;color:var(--ink-soft)">${esc(mt.d)}</div></div></div>`).join("");
 
   $("#faqList").innerHTML = d.faq.map(f=>
-    `<div class="glass faq-item"><button class="faq-q" onclick="toggleFaq(this)">${f.q}<span class="pm">＋</span></button><div class="faq-a"><p>${f.a}</p></div></div>`).join("");
+    `<div class="glass faq-item"><button class="faq-q" onclick="toggleFaq(this)">${esc(f.q)}<span class="pm">＋</span></button><div class="faq-a"><p>${esc(f.a)}</p></div></div>`).join("");
 
   $("#contactInfo").innerHTML = d.contactInfo.map(([i,l,v])=>
-    `<div class="info-line"><span class="ico">${i}</span><div><div style="color:var(--ink-soft);font-size:.8rem">${l}</div><b>${v}</b></div></div>`).join("");
+    `<div class="info-line"><span class="ico">${esc(i)}</span><div><div style="color:var(--ink-soft);font-size:.8rem">${esc(l)}</div><b>${esc(v)}</b></div></div>`).join("");
   $("#socials").innerHTML = (d.socials||[]).map(s=>{
     let u=(s.u||"").trim(); if(u && !/^(https?:|mailto:)/i.test(u)) u="https://"+u;
-    return u ? `<a class="soc" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(s.l)}">${s.i}</a>`
-             : `<a class="soc" href="#" onclick="return false" title="${esc(s.l)}">${s.i}</a>`;
+    return u ? `<a class="soc" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(s.l)}">${esc(s.i)}</a>`
+             : `<a class="soc" href="#" onclick="return false" title="${esc(s.l)}">${esc(s.i)}</a>`;
   }).join("");
 
   observeReveal(); countUp();
