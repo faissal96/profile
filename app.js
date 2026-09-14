@@ -31,6 +31,8 @@ const DATA = {
     bot_tag:"🤖 CHATBOT", bot_title:"Ask GFP Assistant", bot_cta:"Tap to chat ↗",
     ge2_eyebrow:"Course guide", ge2_h:"General English 2", ge2_p:"Everything about the GE2 course — objectives, outcomes, assessment, weekly plan, attendance and exam rules — in one page.",
     ge2_tag:"📘 GE2", ge2_title:"General English 2 (FPGE0002)", ge2_cta:"Open the course guide ↗",
+    utas_eyebrow:"Official site", utas_h:"UTAS – Nizwa", utas_p:"Visit the official University of Technology and Applied Sciences – Nizwa website for admissions, news and more.",
+    utas_cta:"Visit utas.edu.om/nizwa ↗",
     activities:[
       {id:"jar",e:"🫙",t:"Magic Number Jar",d:"Shake the jar and draw a folded number — no repeats."},
       {id:"ball",e:"🎾",t:"Question Ball",d:"Toss the ball around — each student introduces themselves."},
@@ -199,6 +201,8 @@ const DATA = {
     bot_tag:"🤖 شات بوت", bot_title:"اسألي مساعد GFP", bot_cta:"دوسي للدردشة ↗",
     ge2_eyebrow:"دليل المقرر", ge2_h:"اللغة الإنجليزية العامة 2", ge2_p:"كل شي عن مقرر GE2 — الأهداف، مخرجات التعلم، التقييم، الخطة الأسبوعية، الحضور وقوانين الامتحان — بصفحة وحدة.",
     ge2_tag:"📘 GE2", ge2_title:"اللغة الإنجليزية العامة 2 (FPGE0002)", ge2_cta:"افتحي دليل المقرر ↗",
+    utas_eyebrow:"الموقع الرسمي", utas_h:"جامعة التقنية والعلوم التطبيقية – نزوى", utas_p:"زوري الموقع الرسمي لجامعة التقنية والعلوم التطبيقية بنزوى للقبول والأخبار والمزيد.",
+    utas_cta:"زيارة utas.edu.om/nizwa ↗",
     activities:[
       {id:"jar",e:"🫙",t:"الجرة العجيبة",d:"رُجّ الجرة واسحب ورقة برقم — بلا تكرار."},
       {id:"ball",e:"🎾",t:"كرة الأسئلة",d:"تبادلوا رمي الكرة — كل طالب يعرّف بنفسه."},
